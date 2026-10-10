@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SO2fam - Global Standoff 2 Clan Platform</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -78,7 +78,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
             z-index: 10;
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
@@ -91,13 +91,13 @@
 
         .auth-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
             background-image: linear-gradient(rgba(33, 34, 38, 0.92), rgba(33, 34, 38, 0.96)), url('https://fotovssylku.ru/i/1791648775599.ubZIe');
             background-size: cover;
             background-position: center;
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 28px;
+            padding: 24px;
             box-shadow: 0 12px 35px rgba(0,0,0,0.7);
             backdrop-filter: blur(8px);
         }
@@ -105,25 +105,25 @@
         h1, h2, h3 {
             color: var(--text-main);
             text-align: center;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             letter-spacing: 1px;
             text-transform: uppercase;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         p {
             color: var(--text-muted);
-            font-size: 12.5px;
-            line-height: 1.5;
-            margin-bottom: 14px;
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 12px;
             text-align: center;
         }
 
         .creator-watermark {
             position: fixed;
-            bottom: 8px;
-            right: 12px;
-            font-size: 9.5px;
+            bottom: 6px;
+            right: 10px;
+            font-size: 9px;
             color: var(--accent-gold);
             z-index: 999;
             opacity: 0.85;
@@ -134,30 +134,29 @@
             background: linear-gradient(135deg, #2f3238, #25272c);
             color: var(--text-main);
             border: 1px solid var(--border-color);
-            padding: 10px 16px;
+            padding: 10px 14px;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 11.5px;
+            font-size: 11px;
             cursor: pointer;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             transition: all 0.2s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            margin: 6px 0;
+            margin: 5px 0;
             width: 100%;
             outline: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn:hover {
             background: linear-gradient(135deg, #383b42, #2c2f35);
             border-color: var(--accent-gold);
             box-shadow: 0 0 12px var(--accent-gold-glow);
-            transform: translateY(-1px);
         }
 
         .btn:active {
@@ -172,31 +171,21 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
 
-        .btn-gold:hover {
-            background: linear-gradient(135deg, #f1c40f, #e67e22);
-            box-shadow: 0 0 16px rgba(243, 156, 18, 0.5);
-        }
-
         .btn-danger {
             background: linear-gradient(135deg, #c0392b, #962d22);
             border-color: #e74c3c;
             color: #fff;
         }
 
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            box-shadow: 0 0 12px rgba(231, 76, 60, 0.4);
-        }
-
         input, textarea, select {
             width: 100%;
             background: rgba(27, 28, 31, 0.95);
             border: 1px solid var(--border-color);
-            padding: 10px 14px;
+            padding: 10px 12px;
             border-radius: 8px;
             color: var(--text-main);
-            font-size: 12.5px;
-            margin-bottom: 12px;
+            font-size: 12px;
+            margin-bottom: 10px;
             outline: none;
             transition: 0.2s;
         }
@@ -219,7 +208,6 @@
             justify-content: center;
             align-items: center;
             z-index: 100;
-            transition: opacity 0.3s ease;
         }
 
         .loading-overlay.hidden {
@@ -235,8 +223,8 @@
         }
 
         .spinner-dots div {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             background-color: var(--accent-gold);
             border-radius: 50%;
             animation: bounceDot 0.6s infinite alternate ease-in-out;
@@ -248,14 +236,14 @@
 
         @keyframes bounceDot {
             from { transform: translateY(0); opacity: 0.4; }
-            to { transform: translateY(-10px); opacity: 1; }
+            to { transform: translateY(-8px); opacity: 1; }
         }
 
         .bottom-nav {
             display: flex;
             background: var(--bg-panel);
             border-top: 1px solid var(--border-color);
-            height: 60px;
+            height: 55px;
             position: absolute;
             bottom: 0;
             left: 0;
@@ -286,45 +274,37 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 600;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            transition: 0.2s;
             outline: none;
             position: relative;
         }
 
         .nav-item svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             fill: currentColor;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
-        .nav-item.active, .nav-item:hover {
+        .nav-item.active {
             color: var(--accent-gold);
             background: rgba(243, 156, 18, 0.04);
         }
 
         .red-dot-indicator {
             position: absolute;
-            top: 8px;
+            top: 6px;
             right: 32%;
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             background-color: var(--danger);
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--danger), 0 0 15px var(--danger);
-            animation: pulseRedDot 1.5s infinite;
+            box-shadow: 0 0 8px var(--danger);
         }
         .red-dot-indicator.hidden { display: none; }
-
-        @keyframes pulseRedDot {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(231, 76, 60, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
-        }
 
         .main-container {
             width: 100%;
@@ -334,65 +314,56 @@
 
         .main-content {
             width: 100%;
-            height: calc(100vh - 60px);
-            padding: 24px 35px;
+            height: calc(100vh - 55px);
+            padding: 16px;
             overflow-y: auto;
         }
 
         .view {
             display: none;
-            max-width: 1250px;
+            max-width: 100%;
             margin: 0 auto;
         }
 
         .view.active {
             display: block;
-            animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeIn 0.25s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .clans-grid {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             overflow-x: auto;
-            padding-bottom: 12px;
-            margin-top: 15px;
+            padding-bottom: 10px;
+            margin-top: 10px;
             scroll-behavior: smooth;
         }
 
-        .clans-grid::-webkit-scrollbar { height: 6px; }
-        .clans-grid::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        .clans-grid::-webkit-scrollbar { height: 4px; }
+        .clans-grid::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
 
         .clan-card {
-            min-width: 280px;
+            min-width: 250px;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 14px;
+            padding: 12px;
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             flex-shrink: 0;
-            backdrop-filter: blur(8px);
-        }
-
-        .clan-card:hover {
-            border-color: var(--accent-gold);
-            background: var(--bg-card-hover);
-            box-shadow: 0 6px 16px var(--accent-gold-glow);
-            transform: translateY(-2px);
         }
 
         .clan-avatar {
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
             border-radius: 8px;
             object-fit: cover;
             border: 1px solid var(--border-color);
@@ -401,28 +372,27 @@
 
         .clan-info h4 {
             color: var(--text-main);
-            font-size: 15px;
-            margin-bottom: 3px;
+            font-size: 14px;
+            margin-bottom: 2px;
             text-align: left;
         }
 
         .clan-info span {
             color: var(--accent-gold);
-            font-size: 11px;
+            font-size: 10.5px;
             background: rgba(243, 156, 18, 0.15);
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
             font-weight: 600;
-            border: 1px solid rgba(243, 156, 18, 0.3);
         }
 
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
 
         .gear-btn {
@@ -431,16 +401,14 @@
             border-radius: 8px;
             color: var(--text-muted);
             cursor: pointer;
-            padding: 8px;
+            padding: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.2s;
             outline: none;
         }
 
-        .gear-btn svg { width: 18px; height: 18px; fill: currentColor; }
-        .gear-btn:hover { color: var(--accent-gold); border-color: var(--accent-gold); }
+        .gear-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
         .modal-overlay {
             position: fixed;
@@ -453,8 +421,8 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            padding: 15px;
             backdrop-filter: blur(5px);
-            transition: opacity 0.3s ease;
         }
 
         .modal-overlay.hidden { display: none; opacity: 0; pointer-events: none; }
@@ -463,22 +431,21 @@
             background: var(--bg-panel);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 28px;
+            padding: 20px;
             width: 100%;
-            max-width: 400px;
+            max-width: 360px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
         }
 
         .badge-tag {
             display: inline-block;
             background: #1b1c1f;
             color: var(--accent-gold);
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 11px;
-            margin-bottom: 12px;
+            font-size: 10.5px;
+            margin-bottom: 10px;
             border: 1px solid var(--border-color);
         }
 
@@ -486,115 +453,96 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            max-width: 460px;
+            width: 100%;
+            max-width: 420px;
             margin: 0 auto;
             overflow: hidden;
             box-shadow: 0 6px 20px rgba(0,0,0,0.4);
             text-align: center;
             position: relative;
-            padding-bottom: 24px;
-            backdrop-filter: blur(8px);
+            padding-bottom: 20px;
         }
 
         .profile-banner-container {
             width: 100%;
-            height: 120px;
+            height: 110px;
             background: #1b1c1f;
             position: relative;
             cursor: pointer;
         }
 
-        .profile-banner-container:hover::after {
-            content: attr(data-txt);
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: var(--accent-gold);
-            font-weight: 600;
-        }
-
         .profile-avatar-circle {
-            width: 90px;
-            height: 90px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            border: 4px solid var(--bg-card);
+            border: 3px solid var(--bg-card);
             object-fit: cover;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            bottom: -45px;
+            bottom: -40px;
             background: var(--bg-dark);
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             cursor: pointer;
-            transition: 0.2s;
         }
-        .profile-avatar-circle:hover { border-color: var(--accent-gold); }
 
         .profile-body {
-            padding: 55px 24px 15px 24px;
+            padding: 48px 16px 12px 16px;
         }
 
         .editable-name {
             cursor: pointer;
             border-bottom: 1px dashed var(--accent-gold);
             display: inline-block;
-            transition: 0.2s;
         }
-        .editable-name:hover { color: var(--accent-gold); }
 
         .clan-detail-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            max-width: 700px;
+            width: 100%;
+            max-width: 600px;
             margin: 0 auto;
             overflow: hidden;
             box-shadow: 0 8px 25px rgba(0,0,0,0.5);
             text-align: left;
-            backdrop-filter: blur(8px);
         }
 
         .clan-detail-banner {
             width: 100%;
-            height: 200px;
+            height: 160px;
             object-fit: cover;
             background: #1b1c1f;
             border-bottom: 1px solid var(--border-color);
         }
 
         .clan-detail-body {
-            padding: 24px;
+            padding: 16px;
         }
 
         .members-list {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            margin: 12px 0 20px 0;
+            margin: 10px 0 16px 0;
         }
 
         .member-chip {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: #1b1c1f;
             border: 1px solid var(--border-color);
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 20px;
-            font-size: 11.5px;
+            font-size: 11px;
             color: var(--text-main);
             cursor: pointer;
-            transition: 0.2s;
         }
-        .member-chip:hover { border-color: var(--accent-gold); }
 
         .member-chip img {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             object-fit: cover;
         }
@@ -603,98 +551,87 @@
             background: #1b1c1f;
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 14px;
-            height: 220px;
+            padding: 12px;
+            height: 200px;
             overflow-y: auto;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             scroll-behavior: smooth;
         }
 
         .tg-msg {
             display: flex;
             align-items: flex-start;
-            gap: 10px;
-            font-size: 12px;
+            gap: 8px;
+            font-size: 11.5px;
         }
 
         .tg-msg img {
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             object-fit: cover;
             flex-shrink: 0;
             border: 1px solid var(--border-color);
             cursor: pointer;
-            transition: 0.2s;
         }
-        .tg-msg img:hover { border-color: var(--accent-gold); }
 
         .tg-msg-bubble {
             background: #282a2e;
             border: 1px solid var(--border-color);
-            padding: 8px 12px;
+            padding: 7px 10px;
             border-radius: 10px;
-            max-width: 80%;
+            max-width: 82%;
             word-break: break-word;
         }
 
         .tg-msg-author {
-            font-size: 10.5px;
+            font-size: 10px;
             color: var(--accent-gold);
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             font-weight: 600;
             cursor: pointer;
         }
-        .tg-msg-author:hover { text-decoration: underline; }
 
         #privacy-push {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 310px;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            max-width: 320px;
             background: var(--bg-panel);
             border: 1px solid var(--accent-gold);
             border-radius: 10px;
-            padding: 16px;
+            padding: 14px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             z-index: 9999;
             backdrop-filter: blur(10px);
-            animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #privacy-push.hidden { display: none; opacity: 0; pointer-events: none; }
-        @keyframes slideInLeft {
-            from { transform: translateY(40px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
 
         #toast-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 16px;
+            right: 16px;
+            left: 16px;
+            max-width: 300px;
+            margin-left: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             z-index: 9999;
             pointer-events: none;
-            max-width: 320px;
         }
         .toast-item {
             background: var(--bg-panel);
             border: 1px solid var(--accent-gold);
             border-radius: 8px;
-            padding: 10px 14px;
+            padding: 10px 12px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.6);
             backdrop-filter: blur(10px);
             pointer-events: auto;
-            animation: slideInRight 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            transition: opacity 0.3s ease;
-        }
-        @keyframes slideInRight {
-            from { transform: translateX(50px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
         }
     </style>
 </head>
@@ -705,16 +642,16 @@
 
     <div id="toast-container"></div>
 
-    <div id="global-loader" class="loading-overlay hidden">
+    <div id="global-loader" class="loading-overlay">
         <div class="spinner-dots">
             <div></div><div></div><div></div>
         </div>
-        <p id="loader-text" style="color: var(--accent-gold); font-weight: 600; font-size: 11.5px;">LOADING...</p>
+        <p id="loader-text" style="color: var(--accent-gold); font-weight: 600; font-size: 11px;">ЗАГРУЗКА...</p>
     </div>
 
 <div id="app">
 
-    <div id="screen-lang" class="screen">
+    <div id="screen-lang" class="screen hidden">
         <div class="auth-container">
             <h2>SO2fam</h2>
             <p>Выберите язык / Choose language</p>
@@ -734,9 +671,9 @@
     </div>
 
     <div id="screen-welcome-info" class="screen hidden">
-        <div class="auth-container" style="max-width: 480px;">
+        <div class="auth-container" style="max-width: 420px;">
             <h2 id="t-wel-title">Добро пожаловать</h2>
-            <p id="t-wel-text" style="text-align: left; font-size: 13px; line-height: 1.6;">Тут используются только настоящие кланы из игры Standoff 2.<br><br>
+            <p id="t-wel-text" style="text-align: left; font-size: 12px; line-height: 1.5;">Тут используются только настоящие кланы из игры Standoff 2.<br><br>
             <b>Для чего нужен этот сайт:</b> Площадка создана для поиска проверенных кланов, подачи заявок на вступление, общения игроков и создания глобального сообщества без фейков.</p>
             <button class="btn btn-gold" id="t-wel-btn" onclick="goToHubChoice()">Далее</button>
         </div>
@@ -758,7 +695,7 @@
                 <div id="view-feed" class="view active">
                     <div class="top-bar">
                         <h2 id="t-feed-title">Лента кланов Standoff 2</h2>
-                        <span style="font-size: 10.5px; color: var(--accent-gold); font-weight: 600;">SO2FAM HUB</span>
+                        <span style="font-size: 10px; color: var(--accent-gold); font-weight: 600;">SO2FAM HUB</span>
                     </div>
                     <div id="clans-feed-list" class="clans-grid"></div>
                 </div>
@@ -771,7 +708,7 @@
                     <div class="top-bar">
                         <h2 id="t-notif-title">Уведомления и заявки</h2>
                     </div>
-                    <div id="notifications-list" style="max-width: 600px; margin: 0 auto;">
+                    <div id="notifications-list" style="max-width: 100%;">
                         <p id="t-notif-empty">Нет новых уведомлений</p>
                     </div>
                 </div>
@@ -793,19 +730,19 @@
                             <h3 style="margin-bottom: 2px; margin-top: 5px;">
                                 <span id="profile-display-name" class="editable-name" onclick="inlineEditName()" title="Нажмите, чтобы изменить имя">Игрок</span>
                             </h3>
-                            <p id="profile-display-id" style="margin-bottom: 12px; color: var(--accent-gold); font-weight: bold; font-size: 11.5px;">ID: 000000000</p>
+                            <p id="profile-display-id" style="margin-bottom: 10px; color: var(--accent-gold); font-weight: bold; font-size: 11px;">ID: 000000000</p>
 
-                            <div style="margin-bottom: 15px; text-align: left; background: rgba(27,28,31,0.6); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <div style="margin-bottom: 12px; text-align: left; background: rgba(27,28,31,0.6); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                    <span id="t-bio-title" style="font-size: 10.5px; color: var(--accent-gold); font-weight: 600;">ОПИСАНИЕ (ПОРТФОЛИО):</span>
-                                    <span id="t-bio-edit" style="font-size: 10.5px; cursor: pointer; color: var(--text-muted);" onclick="editUserBio()">[✎] Изменить</span>
+                                    <span id="t-bio-title" style="font-size: 10px; color: var(--accent-gold); font-weight: 600;">ОПИСАНИЕ (ПОРТФОЛИО):</span>
+                                    <span id="t-bio-edit" style="font-size: 10px; cursor: pointer; color: var(--text-muted);" onclick="editUserBio()">[✎] Изменить</span>
                                 </div>
-                                <p id="profile-display-bio" style="font-size: 12px; color: var(--text-main); margin: 0; word-break: break-word;">Нет описания...</p>
+                                <p id="profile-display-bio" style="font-size: 11.5px; color: var(--text-main); margin: 0; word-break: break-word;">Нет описания...</p>
                             </div>
 
                             <div id="profile-clan-section"></div>
                             
-                            <div id="admin-reserve-exit" style="margin-top: 15px; display: none;">
+                            <div id="admin-reserve-exit" style="margin-top: 12px; display: none;">
                                 <button class="btn btn-danger" id="t-exit-admin-btn" onclick="exitAdminReserveAccount()">Выйти из аккаунта администратора</button>
                             </div>
                         </div>
@@ -815,12 +752,12 @@
                 <div id="view-create-clan" class="view">
                     <div class="top-bar">
                         <h2 id="t-create-title">Добавить свой клан</h2>
-                        <button class="btn" id="t-create-back" style="width: auto; padding: 6px 12px; margin:0; font-size: 10.5px;" onclick="openMainApp()">На главную</button>
+                        <button class="btn" id="t-create-back" style="width: auto; padding: 6px 10px; margin:0; font-size: 10px;" onclick="openMainApp()">На главную</button>
                     </div>
-                    <div class="profile-card" style="text-align: left; padding: 24px;">
-                        <p id="t-create-subtitle" style="text-align: left; margin-bottom: 12px; font-size: 12.5px;">Заполните информацию о клане для прохождения официальной модерации.</p>
+                    <div class="profile-card" style="text-align: left; padding: 16px;">
+                        <p id="t-create-subtitle" style="text-align: left; margin-bottom: 10px; font-size: 11.5px;">Заполните информацию о клане для прохождения официальной модерации.</p>
                         
-                        <label id="t-create-lbl1" style="font-size: 10.5px; color: var(--text-muted); display: block; margin-bottom: 4px;">1. Фотография клана (баннер):</label>
+                        <label id="t-create-lbl1" style="font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 4px;">1. Фотография клана (баннер):</label>
                         <input type="file" id="clan-form-photo-file" accept="image/*">
 
                         <input type="text" id="clan-form-name" placeholder="2. Название клана">
@@ -833,7 +770,7 @@
                 <div id="view-admin-panel" class="view">
                     <div class="top-bar">
                         <h2 id="t-admin-title">Панель администратора SO2fam</h2>
-                        <button class="btn btn-danger" style="width: auto; padding: 6px 12px; margin:0; font-size: 10.5px;" onclick="openMainApp()">Выйти</button>
+                        <button class="btn btn-danger" style="width: auto; padding: 6px 10px; margin:0; font-size: 10px;" onclick="openMainApp()">Выйти</button>
                     </div>
                     <p id="t-admin-subtitle" style="text-align: left; margin-bottom: 10px;">Входящие заявки на создание кланов:</p>
                     <div id="admin-requests-list">
@@ -863,25 +800,25 @@
     </div>
 
     <div id="privacy-push" class="hidden">
-        <h4 id="t-priv-title" style="color: var(--accent-gold); font-size: 13px; margin-bottom: 6px; text-align: left;">Конфиденциальность</h4>
-        <p id="t-priv-text" style="text-align: left; font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">Используя платформу SO2fam, вы соглашаетесь с правилами безопасности и конфиденциальности сообщества.</p>
-        <button class="btn btn-gold" style="padding: 6px 12px; font-size: 11px; margin: 0; width: auto;" onclick="closePrivacyPush()">ОК</button>
+        <h4 id="t-priv-title" style="color: var(--accent-gold); font-size: 12px; margin-bottom: 4px; text-align: left;">Конфиденциальность</h4>
+        <p id="t-priv-text" style="text-align: left; font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Используя платформу SO2fam, вы соглашаетесь с правилами безопасности.</p>
+        <button class="btn btn-gold" style="padding: 6px 10px; font-size: 10.5px; margin: 0; width: auto;" onclick="closePrivacyPush()">ОК</button>
     </div>
 
     <div id="user-portfolio-modal" class="modal-overlay hidden">
-        <div class="modal-box" style="text-align: center; max-width: 360px;">
-            <img id="portfolio-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-gold); margin-bottom: 12px;">
+        <div class="modal-box" style="text-align: center; max-width: 320px;">
+            <img id="portfolio-avatar" src="" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-gold); margin-bottom: 10px;">
             <h3 id="portfolio-name" style="margin-bottom: 4px;">Имя игрока</h3>
-            <p id="portfolio-id" style="color: var(--accent-gold); font-size: 11.5px; font-weight: bold; margin-bottom: 8px;">ID: 000000</p>
+            <p id="portfolio-id" style="color: var(--accent-gold); font-size: 11px; font-weight: bold; margin-bottom: 6px;">ID: 000000</p>
             
-            <div id="portfolio-clan-badge" style="display: none; background: rgba(243,156,18,0.1); border: 1px solid var(--accent-gold); padding: 8px 10px; border-radius: 6px; margin-bottom: 12px; text-align: left;">
-                <span id="t-port-mini" style="font-size: 9.5px; color: var(--text-muted); display: block; margin-bottom: 2px;">МИНИ-КЛАН:</span>
-                <span id="portfolio-clan-text" style="color: var(--accent-gold); font-size: 12px; font-weight: bold;"></span>
+            <div id="portfolio-clan-badge" style="display: none; background: rgba(243,156,18,0.1); border: 1px solid var(--accent-gold); padding: 6px 8px; border-radius: 6px; margin-bottom: 10px; text-align: left;">
+                <span id="t-port-mini" style="font-size: 9px; color: var(--text-muted); display: block; margin-bottom: 2px;">МИНИ-КЛАН:</span>
+                <span id="portfolio-clan-text" style="color: var(--accent-gold); font-size: 11.5px; font-weight: bold;"></span>
             </div>
 
-            <div style="background: rgba(27,28,31,0.8); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); text-align: left; margin-bottom: 16px;">
-                <span id="t-port-bio" style="font-size: 10px; color: var(--accent-gold); font-weight: 600; display: block; margin-bottom: 4px;">ОПИСАНИЕ ИГРОКА:</span>
-                <p id="portfolio-bio" style="font-size: 12px; color: var(--text-main); margin: 0; word-break: break-word;">Описание отсутствует.</p>
+            <div style="background: rgba(27,28,31,0.8); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); text-align: left; margin-bottom: 14px;">
+                <span id="t-port-bio" style="font-size: 9.5px; color: var(--accent-gold); font-weight: 600; display: block; margin-bottom: 4px;">ОПИСАНИЕ ИГРОКА:</span>
+                <p id="portfolio-bio" style="font-size: 11.5px; color: var(--text-main); margin: 0; word-break: break-word;">Описание отсутствует.</p>
             </div>
             <button class="btn btn-gold" id="t-port-close" onclick="closePortfolioModal()">Закрыть</button>
         </div>
@@ -890,9 +827,9 @@
     <div id="edit-clan-modal" class="modal-overlay hidden">
         <div class="modal-box">
             <h2 id="t-edit-title">Редактирование клана</h2>
-            <p id="edit-clan-readonly-info" style="font-size: 11.5px; color: var(--accent-gold); margin-bottom: 12px; text-align: center;"></p>
+            <p id="edit-clan-readonly-info" style="font-size: 11px; color: var(--accent-gold); margin-bottom: 10px; text-align: center;"></p>
             <textarea id="edit-clan-desc" placeholder="Описание клана" rows="3"></textarea>
-            <label id="t-edit-lbl" style="font-size: 10.5px; color: var(--text-muted); display: block; margin-bottom: 4px;">Новый баннер (аватарка) клана:</label>
+            <label id="t-edit-lbl" style="font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 4px;">Новый баннер (аватарка) клана:</label>
             <input type="file" id="edit-clan-photo-file" accept="image/*">
             <button class="btn btn-gold" id="t-edit-save" onclick="saveClanEdits()">Сохранить изменения</button>
             <button class="btn" id="t-edit-cancel" onclick="closeEditClanModal()">Отмена</button>
@@ -902,7 +839,7 @@
     <div id="site-alert-modal" class="modal-overlay hidden">
         <div class="modal-box" style="text-align: center;">
             <h2>SO2fam</h2>
-            <p id="site-alert-text" style="margin-bottom: 16px;"></p>
+            <p id="site-alert-text" style="margin-bottom: 14px;"></p>
             <button class="btn btn-gold" onclick="closeSiteAlert()">ОК</button>
         </div>
     </div>
@@ -1239,10 +1176,10 @@
         toast.className = 'toast-item';
         toast.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
-                <span style="color:var(--accent-gold); font-size:11.5px; font-weight:700;">[i] ${title}</span>
+                <span style="color:var(--accent-gold); font-size:11px; font-weight:700;">[i] ${title}</span>
                 <span style="font-size:10px; color:var(--text-muted); cursor:pointer;" onclick="this.parentElement.parentElement.remove()">✕</span>
             </div>
-            <p style="margin:0; font-size:11.5px; color:var(--text-main); text-align:left;">${text}</p>
+            <p style="margin:0; font-size:11px; color:var(--text-main); text-align:left;">${text}</p>
         `;
         container.appendChild(toast);
         setTimeout(() => {
@@ -1310,6 +1247,8 @@
     let isAdminReserveActive = false;
     let editingClanId = null;
     let currentRejectingClanId = null;
+    let activeChatClanId = null;
+    let chatPollInterval = null;
 
     let appData = {
         clans: [],
@@ -1320,28 +1259,36 @@
 
     async function fetchAppDataFromSupabase() {
         try {
-            const { data: clansData } = await sb.from('clans').select('*');
-            const { data: membersData } = await sb.from('profiles').select('*');
-            const { data: chatData } = await sb.from('clan_chat').select('*');
-            const { data: reqsData } = await sb.from('join_requests').select('*');
-            const { data: pendingData } = await sb.from('pending_clans').select('*');
-            const { data: notifsData } = await sb.from('notifications').select('*');
+            const fetchPromise = async () => {
+                const { data: clansData } = await sb.from('clans').select('*');
+                const { data: membersData } = await sb.from('profiles').select('*');
+                const { data: chatData } = await sb.from('clan_chat').select('*');
+                const { data: reqsData } = await sb.from('join_requests').select('*');
+                const { data: pendingData } = await sb.from('pending_clans').select('*');
+                const { data: notifsData } = await sb.from('notifications').select('*');
 
-            appData.clans = (clansData || []).map(c => ({
-                ...c,
-                photo: c.photo && c.photo.trim() !== '' ? c.photo : 'https://via.placeholder.com/700x200/282a2e/f39c12?text=SO2+CLAN',
-                desc: c.description,
-                members: (membersData || []).filter(m => m.clan_id === c.id),
-                chat: (chatData || []).filter(ch => ch.clan_id === c.id)
-            }));
+                appData.clans = (clansData || []).map(c => ({
+                    ...c,
+                    photo: c.photo && c.photo.trim() !== '' ? c.photo : 'https://via.placeholder.com/700x200/282a2e/f39c12?text=SO2+CLAN',
+                    desc: c.description,
+                    members: (membersData || []).filter(m => m.clan_id === c.id),
+                    chat: (chatData || []).filter(ch => ch.clan_id === c.id)
+                }));
 
-            appData.joinRequests = reqsData || [];
-            appData.pendingClans = pendingData || [];
-            appData.notifications = notifsData || [];
-            
-            checkUnreadStatus();
+                appData.joinRequests = reqsData || [];
+                appData.pendingClans = pendingData || [];
+                appData.notifications = notifsData || [];
+                
+                checkUnreadStatus();
+            };
+
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Timeout')), 5000)
+            );
+
+            await Promise.race([fetchPromise(), timeoutPromise]);
         } catch (err) {
-            console.error('Error fetching from Supabase:', err);
+            console.warn('Supabase fetch timeout or error, using fallback:', err);
         }
     }
 
@@ -1371,32 +1318,36 @@
         await fetchAppDataFromSupabase();
         hideLoader();
 
-        const savedUserJson = localStorage.getItem('so2fam_current_user');
+        let savedUserJson = localStorage.getItem('so2fam_current_user');
+        if (!savedUserJson) {
+            savedUserJson = sessionStorage.getItem('so2fam_current_user');
+        }
+
         if (savedUserJson) {
             try {
                 const parsed = JSON.parse(savedUserJson);
                 if (parsed && parsed.id) {
-                    let { data: existingProfile } = await sb.from('profiles').select('*').eq('id', parsed.id).single();
-                    if (existingProfile) {
-                        currentUser = {
-                            id: existingProfile.id,
-                            name: existingProfile.name,
-                            avatar: existingProfile.avatar || parsed.avatar,
-                            bio: existingProfile.bio,
-                            clanId: existingProfile.clan_id
-                        };
-                        
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const inviteClanId = urlParams.get('clan');
+                    currentUser = {
+                        id: parsed.id,
+                        name: parsed.name,
+                        avatar: parsed.avatar,
+                        bio: parsed.bio,
+                        clanId: parsed.clanId || parsed.clan_id
+                    };
+                    
+                    localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+                    sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
 
-                        await openMainApp();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const inviteClanId = urlParams.get('clan');
 
-                        if (inviteClanId) {
-                            window.history.replaceState({}, document.title, window.location.pathname);
-                            openClanDetail(inviteClanId);
-                        }
-                        return;
+                    await openMainApp();
+
+                    if (inviteClanId) {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        openClanDetail(inviteClanId);
                     }
+                    return;
                 }
             } catch (e) {
                 console.error(e);
@@ -1439,7 +1390,11 @@
         const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}&backgroundColor=f39c12`;
 
         try {
-            let { data: existingProfile } = await sb.from('profiles').select('*').eq('id', idInput).single();
+            let existingProfile = null;
+            try {
+                let res = await sb.from('profiles').select('*').eq('id', idInput).single();
+                existingProfile = res.data;
+            } catch(e) {}
 
             if (!existingProfile) {
                 const newProf = {
@@ -1449,7 +1404,9 @@
                     bio: currentUser.bio,
                     clan_id: null
                 };
-                await sb.from('profiles').insert([newProf]);
+                try {
+                    await sb.from('profiles').insert([newProf]);
+                } catch(e) {}
                 currentUser = newProf;
             } else {
                 currentUser = {
@@ -1462,13 +1419,14 @@
             }
 
             localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+            sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
 
             hideLoader();
             document.getElementById('screen-auth').classList.add('hidden');
             document.getElementById('screen-welcome-info').classList.remove('hidden');
         } catch (err) {
             hideLoader();
-            showSiteAlert('Database error: ' + err.message);
+            showSiteAlert('Error: ' + err.message);
         }
     }
 
@@ -1496,12 +1454,17 @@
     }
 
     function showCreateClanScreen() {
+        stopChatPolling();
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         document.getElementById('screen-main').classList.remove('hidden');
         switchView('create-clan');
     }
 
     function switchView(viewName, navElement, index) {
+        if (viewName !== 'clan-detail') {
+            stopChatPolling();
+        }
+
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         const target = document.getElementById('view-' + viewName);
         if (target) target.classList.add('active');
@@ -1543,9 +1506,12 @@
                 return;
             }
             currentUser.name = trimmed;
-            await sb.from('profiles').update({ name: trimmed }).eq('id', currentUser.id);
-            await sb.from('clan_chat').update({ sender_name: trimmed }).eq('sender_id', currentUser.id);
+            try {
+                await sb.from('profiles').update({ name: trimmed }).eq('id', currentUser.id);
+                await sb.from('clan_chat').update({ sender_name: trimmed }).eq('sender_id', currentUser.id);
+            } catch(e) {}
             localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+            sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             renderProfile();
             showToast(dict[currentLang].toastProfileUpd, currentLang === 'ru' ? 'Имя успешно изменено!' : 'Username changed successfully!');
         }
@@ -1560,8 +1526,11 @@
                 return;
             }
             currentUser.bio = trimmed;
-            await sb.from('profiles').update({ bio: trimmed }).eq('id', currentUser.id);
+            try {
+                await sb.from('profiles').update({ bio: trimmed }).eq('id', currentUser.id);
+            } catch(e) {}
             localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+            sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             renderProfile();
             showToast(dict[currentLang].toastProfileUpd, dict[currentLang].toastBioSaved);
         }
@@ -1576,9 +1545,12 @@
         convertFileToBase64(input, async function(base64Image) {
             if (base64Image) {
                 currentUser.avatar = base64Image;
-                await sb.from('profiles').update({ avatar: base64Image }).eq('id', currentUser.id);
-                await sb.from('clan_chat').update({ sender_avatar: base64Image }).eq('sender_id', currentUser.id);
+                try {
+                    await sb.from('profiles').update({ avatar: base64Image }).eq('id', currentUser.id);
+                    await sb.from('clan_chat').update({ sender_avatar: base64Image }).eq('sender_id', currentUser.id);
+                } catch(e) {}
                 localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+                sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
                 hideLoader();
                 renderProfile();
                 showToast(dict[currentLang].toastProfileUpd, dict[currentLang].toastProfileSaved);
@@ -1688,6 +1660,58 @@
         prompt(currentLang === 'ru' ? 'Скопируйте ссылку для приглашения в клан (выделите и скопируйте):' : 'Copy clan invite link:', inviteUrl);
     }
 
+    function startChatPolling(clanId) {
+        stopChatPolling();
+        activeChatClanId = clanId;
+        chatPollInterval = setInterval(async () => {
+            if (!activeChatClanId) return;
+            try {
+                const { data: chatData } = await sb.from('clan_chat').select('*').eq('clan_id', activeChatClanId);
+                const clan = appData.clans.find(c => c.id === activeChatClanId);
+                if (clan) {
+                    clan.chat = chatData || [];
+                    updateChatMessagesContainer(clan);
+                }
+            } catch (e) {}
+        }, 3000);
+    }
+
+    function stopChatPolling() {
+        if (chatPollInterval) {
+            clearInterval(chatPollInterval);
+            chatPollInterval = null;
+        }
+        activeChatClanId = null;
+    }
+
+    function updateChatMessagesContainer(clan) {
+        const chatBox = document.getElementById('clan-chat-messages');
+        if (!chatBox) return;
+
+        const d = dict[currentLang];
+        let chatHtml = clan.chat && clan.chat.length > 0 ? clan.chat.map(msg => {
+            const memberObj = clan.members.find(m => m.id === msg.sender_id);
+            const msgAvatar = memberObj ? memberObj.avatar : (msg.sender_avatar || 'https://via.placeholder.com/50');
+            const msgName = memberObj ? memberObj.name : (msg.sender_name || 'Player');
+
+            return `
+                <div class="tg-msg">
+                    <img src="${msgAvatar}" onclick="viewUserPortfolio('${msg.sender_id || ''}', '${msgName}')">
+                    <div class="tg-msg-bubble">
+                        <div class="tg-msg-author" onclick="viewUserPortfolio('${msg.sender_id || ''}', '${msgName}')">${msgName}</div>
+                        <div>${msg.text}</div>
+                    </div>
+                </div>
+            `;
+        }).join('') : `<p style="color:var(--text-muted); font-size:11px; text-align:center; margin-top:50px;">${d.noChat}</p>`;
+
+        const wasAtBottom = chatBox.scrollHeight - chatBox.scrollTop <= chatBox.clientHeight + 40;
+        chatBox.innerHTML = chatHtml;
+        if (wasAtBottom) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    }
+
     function openClanDetail(clanId) {
         const clan = appData.clans.find(c => c.id === clanId);
         if (!clan) return;
@@ -1700,40 +1724,22 @@
             <div class="member-chip" onclick="viewUserPortfolio('${m.id || ''}', '${m.name || 'Player'}')">
                 <img src="${m.avatar || 'https://via.placeholder.com/50'}"> ${m.name || 'Player'}
             </div>
-        `).join('') : `<p style="font-size:11.5px; color:var(--text-muted);">${d.noMembers}</p>`;
+        `).join('') : `<p style="font-size:11px; color:var(--text-muted);">${d.noMembers}</p>`;
 
         let chatSection = '';
         if (isOwner || isMember) {
-            let chatHtml = clan.chat && clan.chat.length > 0 ? clan.chat.map(msg => {
-                const memberObj = clan.members.find(m => m.id === msg.sender_id);
-                const msgAvatar = memberObj ? memberObj.avatar : (msg.sender_avatar || 'https://via.placeholder.com/50');
-                const msgName = memberObj ? memberObj.name : (msg.sender_name || 'Player');
-
-                return `
-                    <div class="tg-msg">
-                        <img src="${msgAvatar}" onclick="viewUserPortfolio('${msg.sender_id || ''}', '${msgName}')">
-                        <div class="tg-msg-bubble">
-                            <div class="tg-msg-author" onclick="viewUserPortfolio('${msg.sender_id || ''}', '${msgName}')">${msgName}</div>
-                            <div>${msg.text}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('') : '';
-
             chatSection = `
-                <h3 style="font-size: 12px; text-align: left; margin-top: 18px; color: var(--accent-gold);">${currentLang === 'ru' ? 'Общий чат клана:' : 'Clan Chat:'}</h3>
-                <div class="tg-chat-box" id="clan-chat-messages">
-                    ${chatHtml || `<p style="color:var(--text-muted); font-size:11.5px; text-align:center; margin-top:60px;">${d.noChat}</p>`}
-                </div>
-                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                <h3 style="font-size: 11.5px; text-align: left; margin-top: 14px; color: var(--accent-gold);">${currentLang === 'ru' ? 'Общий чат клана:' : 'Clan Chat:'}</h3>
+                <div class="tg-chat-box" id="clan-chat-messages"></div>
+                <div style="display: flex; gap: 6px; margin-bottom: 12px;">
                     <input type="text" id="clan-chat-input" placeholder="${d.chatPlaceholder}" style="margin:0;" onkeypress="handleChatKeyPress(event, '${clan.id}')">
-                    <button class="btn btn-gold" style="width: auto; margin:0; padding: 0 18px;" onclick="sendClanMessage('${clan.id}')">${d.chatSend}</button>
+                    <button class="btn btn-gold" style="width: auto; margin:0; padding: 0 14px;" onclick="sendClanMessage('${clan.id}')">${d.chatSend}</button>
                 </div>
             `;
         } else {
             chatSection = `
-                <div style="background: rgba(27, 28, 31, 0.95); border: 1px solid var(--border-color); padding: 20px; border-radius: 10px; text-align: center; margin: 15px 0;">
-                    <p style="margin:0; font-size: 12.5px; color: var(--accent-gold);">${d.lockChat}</p>
+                <div style="background: rgba(27, 28, 31, 0.95); border: 1px solid var(--border-color); padding: 16px; border-radius: 10px; text-align: center; margin: 12px 0;">
+                    <p style="margin:0; font-size: 11.5px; color: var(--accent-gold);">${d.lockChat}</p>
                 </div>
             `;
         }
@@ -1741,7 +1747,7 @@
         let ownerButtons = '';
         if (isOwner) {
             ownerButtons = `
-                <button class="btn btn-gold" style="margin-bottom: 8px;" onclick="openEditClanModal('${clan.id}')">${currentLang === 'ru' ? 'Редактировать клан' : 'Edit Clan'}</button>
+                <button class="btn btn-gold" style="margin-bottom: 6px;" onclick="openEditClanModal('${clan.id}')">${currentLang === 'ru' ? 'Редактировать клан' : 'Edit Clan'}</button>
                 <button class="btn btn-danger" onclick="confirmDeleteClan('${clan.id}')">${currentLang === 'ru' ? 'Удалить клан' : 'Delete Clan'}</button>
             `;
         }
@@ -1756,9 +1762,9 @@
         }
 
         const inviteSection = `
-            <div style="margin-top: 15px; background: rgba(27,28,31,0.8); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; text-align: center;">
-                <p style="font-size: 11px; color: var(--accent-gold); margin-bottom: 6px; font-weight: 600;">[🔗] ${currentLang === 'ru' ? 'ССЫЛКА ДЛЯ ПРИГЛАШЕНИЯ В КЛАН:' : 'CLAN INVITE LINK:'}</p>
-                <button class="btn" style="background: #2f3238; font-size: 11px; margin: 0; padding: 8px;" onclick="copyInviteLink('${clan.id}')">[📋] ${currentLang === 'ru' ? 'Получить ссылку для VK/TG' : 'Get Invite Link'}</button>
+            <div style="margin-top: 12px; background: rgba(27,28,31,0.8); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; text-align: center;">
+                <p style="font-size: 10px; color: var(--accent-gold); margin-bottom: 4px; font-weight: 600;">[🔗] ${currentLang === 'ru' ? 'ССЫЛКА ДЛЯ ПРИГЛАШЕНИЯ В КЛАН:' : 'CLAN INVITE LINK:'}</p>
+                <button class="btn" style="background: #2f3238; font-size: 10px; margin: 0; padding: 6px;" onclick="copyInviteLink('${clan.id}')">[📋] ${currentLang === 'ru' ? 'Получить ссылку для VK/TG' : 'Get Invite Link'}</button>
             </div>
         `;
 
@@ -1769,9 +1775,9 @@
                 <div class="clan-detail-body">
                     <h2 style="margin-bottom: 4px; text-align: left; color: var(--text-main);">${clan.name}</h2>
                     <div class="badge-tag">${clan.tag}</div>
-                    <p style="margin: 10px 0; text-align: left; font-size: 12.5px; color: var(--text-muted);">${clan.description || clan.desc || (currentLang === 'ru' ? 'Описание отсутствует.' : 'No description.')}</p>
+                    <p style="margin: 8px 0; text-align: left; font-size: 11.5px; color: var(--text-muted);">${clan.description || clan.desc || (currentLang === 'ru' ? 'Описание отсутствует.' : 'No description.')}</p>
                     
-                    <h3 style="font-size: 12px; text-align: left; margin-top: 18px; color: var(--accent-gold);">${currentLang === 'ru' ? 'Участники клана' : 'Clan Members'} (${clan.members ? clan.members.length : 0}):</h3>
+                    <h3 style="font-size: 11.5px; text-align: left; margin-top: 14px; color: var(--accent-gold);">${currentLang === 'ru' ? 'Участники клана' : 'Clan Members'} (${clan.members ? clan.members.length : 0}):</h3>
                     <div class="members-list">
                         ${membersHtml}
                     </div>
@@ -1779,14 +1785,18 @@
                     ${chatSection}
                     ${actionButton}
                     ${inviteSection}
-                    <button class="btn" style="margin-top: 12px;" onclick="switchView('feed', document.querySelectorAll('.nav-item')[0], 0)">${currentLang === 'ru' ? 'Вернуться на главную' : 'Back to Main'}</button>
+                    <button class="btn" style="margin-top: 10px;" onclick="switchView('feed', document.querySelectorAll('.nav-item')[0], 0)">${currentLang === 'ru' ? 'Вернуться на главную' : 'Back to Main'}</button>
                 </div>
             </div>
         `;
 
         switchView('clan-detail');
-        const chatBox = document.getElementById('clan-chat-messages');
-        if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+        if (isOwner || isMember) {
+            updateChatMessagesContainer(clan);
+            const chatBox = document.getElementById('clan-chat-messages');
+            if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+            startChatPolling(clan.id);
+        }
     }
 
     function handleChatKeyPress(e, clanId) {
@@ -1806,6 +1816,8 @@
             return;
         }
 
+        input.value = '';
+
         const newMsg = {
             clan_id: clanId,
             sender_id: currentUser.id,
@@ -1815,9 +1827,15 @@
             text: text
         };
 
-        await sb.from('clan_chat').insert([newMsg]);
-        await fetchAppDataFromSupabase();
-        openClanDetail(clanId);
+        try {
+            await sb.from('clan_chat').insert([newMsg]);
+            const { data: chatData } = await sb.from('clan_chat').select('*').eq('clan_id', clanId);
+            const clan = appData.clans.find(c => c.id === clanId);
+            if (clan) {
+                clan.chat = chatData || [];
+                updateChatMessagesContainer(clan);
+            }
+        } catch(e) {}
     }
 
     function openEditClanModal(clanId) {
@@ -1853,7 +1871,9 @@
             let updatePayload = { description: desc };
             if (base64Photo) updatePayload.photo = base64Photo;
 
-            await sb.from('clans').update(updatePayload).eq('id', editingClanId);
+            try {
+                await sb.from('clans').update(updatePayload).eq('id', editingClanId);
+            } catch(e) {}
             hideLoader();
             closeEditClanModal();
             await fetchAppDataFromSupabase();
@@ -1883,7 +1903,9 @@
             unread: true
         };
 
-        await sb.from('join_requests').insert([requestObj]);
+        try {
+            await sb.from('join_requests').insert([requestObj]);
+        } catch(e) {}
         await fetchAppDataFromSupabase();
 
         showToast(dict[currentLang].toastReq, dict[currentLang].toastReqSent);
@@ -1895,13 +1917,16 @@
         if (!confirm(currentLang === 'ru' ? 'ТОЧНО УДОСТОВЕРЬТЕСЬ: Вы хотите полностью удалить клан со всеми участниками?' : 'CONFIRM: Do you want to completely delete the clan with all members?')) return;
 
         showLoader(currentLang === 'ru' ? 'УДАЛЕНИЕ КЛАНА...' : 'DELETING CLAN...');
-        await sb.from('clans').delete().eq('id', clanId);
-        await sb.from('profiles').update({ clan_id: null }).eq('clan_id', clanId);
+        try {
+            await sb.from('clans').delete().eq('id', clanId);
+            await sb.from('profiles').update({ clan_id: null }).eq('clan_id', clanId);
+        } catch(e) {}
         
         if (currentUser.clanId === clanId || currentUser.clan_id === clanId) {
             currentUser.clanId = null;
             currentUser.clan_id = null;
             localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+            sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
         }
 
         hideLoader();
@@ -1915,15 +1940,17 @@
         const req = appData.joinRequests.find(r => r.id === reqId);
         if (!req) return;
 
-        await sb.from('profiles').update({ clan_id: req.clan_id }).eq('id', req.user_id);
-        await sb.from('join_requests').delete().eq('id', reqId);
+        try {
+            await sb.from('profiles').update({ clan_id: req.clan_id }).eq('id', req.user_id);
+            await sb.from('join_requests').delete().eq('id', reqId);
 
-        const notif = {
-            id: Date.now() + '_' + Math.floor(Math.random()*1000),
-            text: currentLang === 'ru' ? `Заявка игрока ${req.user_name} на вступление в клан ${req.clan_name} была принята.` : `Player ${req.user_name}'s request to join ${req.clan_name} was accepted.`,
-            unread: true
-        };
-        await sb.from('notifications').insert([notif]);
+            const notif = {
+                id: Date.now() + '_' + Math.floor(Math.random()*1000),
+                text: currentLang === 'ru' ? `Заявка игрока ${req.user_name} на вступление в клан ${req.clan_name} была принята.` : `Player ${req.user_name}'s request to join ${req.clan_name} was accepted.`,
+                unread: true
+            };
+            await sb.from('notifications').insert([notif]);
+        } catch(e) {}
 
         await fetchAppDataFromSupabase();
         renderNotifications();
@@ -1931,7 +1958,9 @@
     }
 
     async function rejectJoinRequest(reqId) {
-        await sb.from('join_requests').delete().eq('id', reqId);
+        try {
+            await sb.from('join_requests').delete().eq('id', reqId);
+        } catch(e) {}
         await fetchAppDataFromSupabase();
         renderNotifications();
         showToast(dict[currentLang].toastReq, dict[currentLang].toastJoinRej);
@@ -1965,7 +1994,9 @@
                 description: desc
             };
 
-            await sb.from('pending_clans').insert([newClanReq]);
+            try {
+                await sb.from('pending_clans').insert([newClanReq]);
+            } catch(e) {}
             hideLoader();
             document.getElementById('status-modal').classList.remove('hidden');
         });
@@ -1988,16 +2019,16 @@
         if (userClanId) {
             const userClan = appData.clans.find(c => c.id === userClanId);
             clanSection.innerHTML = `
-                <div style="background: rgba(243,156,18,0.1); border: 1px solid var(--accent-gold); padding: 12px; border-radius: 8px; margin-bottom: 12px; cursor: pointer;" onclick="openClanDetail('${userClanId}')">
-                    <p style="color: var(--text-muted); font-size: 11px; margin-bottom: 2px;">${currentLang === 'ru' ? 'ВАШ КЛАН:' : 'YOUR CLAN:'}</p>
-                    <p style="color: var(--accent-gold); font-size: 14px; font-weight: bold; margin: 0;">${userClan ? userClan.name + ' ' + userClan.tag : 'Clan'}</p>
+                <div style="background: rgba(243,156,18,0.1); border: 1px solid var(--accent-gold); padding: 10px; border-radius: 8px; margin-bottom: 10px; cursor: pointer;" onclick="openClanDetail('${userClanId}')">
+                    <p style="color: var(--text-muted); font-size: 10px; margin-bottom: 2px;">${currentLang === 'ru' ? 'ВАШ КЛАН:' : 'YOUR CLAN:'}</p>
+                    <p style="color: var(--accent-gold); font-size: 13px; font-weight: bold; margin: 0;">${userClan ? userClan.name + ' ' + userClan.tag : 'Clan'}</p>
                 </div>
-                <button class="btn btn-gold" style="margin-bottom: 6px; padding: 8px;" onclick="openClanDetail('${userClanId}')">${d.btnGoClan}</button>
-                <button class="btn btn-danger" style="padding: 8px;" onclick="leaveClan()">${d.btnLeave}</button>
+                <button class="btn btn-gold" style="margin-bottom: 5px; padding: 7px;" onclick="openClanDetail('${userClanId}')">${d.btnGoClan}</button>
+                <button class="btn btn-danger" style="padding: 7px;" onclick="leaveClan()">${d.btnLeave}</button>
             `;
         } else {
             clanSection.innerHTML = `
-                <button class="btn btn-gold" style="background: #27ae60; color: #fff; padding: 9px;" onclick="showCreateClanScreen()">${currentLang === 'ru' ? 'Создать клан [+]' : 'Create Clan [+]'}</button>
+                <button class="btn btn-gold" style="background: #27ae60; color: #fff; padding: 8px;" onclick="showCreateClanScreen()">${currentLang === 'ru' ? 'Создать клан [+]' : 'Create Clan [+]'}</button>
             `;
         }
 
@@ -2012,10 +2043,13 @@
     }
 
     async function leaveClan() {
-        await sb.from('profiles').update({ clan_id: null }).eq('id', currentUser.id);
+        try {
+            await sb.from('profiles').update({ clan_id: null }).eq('id', currentUser.id);
+        } catch(e) {}
         currentUser.clanId = null;
         currentUser.clan_id = null;
         localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+        sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
         await fetchAppDataFromSupabase();
         renderProfile();
         showToast(dict[currentLang].toastClanUpd, currentLang === 'ru' ? 'Вы покинули клан.' : 'You left the clan.');
@@ -2034,21 +2068,21 @@
         const myRequests = Array.from(new Map(myRequestsRaw.map(r => [r.id, r])).values());
 
         if (myRequests.length > 0) {
-            requestsHtml = `<h3 style="font-size:12.5px; text-align:left; color:var(--accent-gold); margin-bottom:10px;">${currentLang === 'ru' ? 'Заявки на вступление в ваш клан:' : 'Join requests for your clan:'}</h3>` + 
+            requestsHtml = `<h3 style="font-size:11.5px; text-align:left; color:var(--accent-gold); margin-bottom:8px;">${currentLang === 'ru' ? 'Заявки на вступление в ваш клан:' : 'Join requests for your clan:'}</h3>` + 
             myRequests.map(req => `
-                <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <img src="${req.user_avatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor:pointer;" onclick="viewUserPortfolio('${req.user_id}', '${req.user_name}')">
-                        <div style="text-align: left;">
-                            <p style="margin:0; font-size: 12.5px; color: var(--text-main);">
-                                <b>${req.user_name}</b> ${currentLang === 'ru' ? 'хочет вступить в' : 'wants to join'} <b>${req.clan_name}</b>
-                                ${req.unread ? `<span style="background:var(--accent-gold); color:#17181b; padding:2px 6px; border-radius:4px; font-size:9.5px; font-weight:bold; margin-left:6px;">${currentLang === 'ru' ? 'НОВОЕ!' : 'NEW!'}</span>` : ''}
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                        <img src="${req.user_avatar}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; cursor:pointer; flex-shrink: 0;" onclick="viewUserPortfolio('${req.user_id}', '${req.user_name}')">
+                        <div style="text-align: left; overflow: hidden;">
+                            <p style="margin:0; font-size: 11.5px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                <b>${req.user_name}</b>
+                                ${req.unread ? `<span style="background:var(--accent-gold); color:#17181b; padding:2px 5px; border-radius:4px; font-size:9px; font-weight:bold; margin-left:4px;">${currentLang === 'ru' ? 'НОВОЕ!' : 'NEW!'}</span>` : ''}
                             </p>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-gold" style="width: auto; padding: 6px 12px; margin:0;" onclick="acceptJoinRequest('${req.id}')">${d.btnAccept}</button>
-                        <button class="btn btn-danger" style="width: auto; padding: 6px 12px; margin:0;" onclick="rejectJoinRequest('${req.id}')">${d.btnReject}</button>
+                    <div style="display: flex; gap: 6px; flex-shrink: 0;">
+                        <button class="btn btn-gold" style="width: auto; padding: 6px 10px; margin:0; font-size: 10px;" onclick="acceptJoinRequest('${req.id}')">${d.btnAccept}</button>
+                        <button class="btn btn-danger" style="width: auto; padding: 6px 10px; margin:0; font-size: 10px;" onclick="rejectJoinRequest('${req.id}')">${d.btnReject}</button>
                     </div>
                 </div>
             `).join('');
@@ -2056,10 +2090,10 @@
 
         const uniqueNotifs = Array.from(new Map((appData.notifications || []).map(n => [n.id, n])).values());
         let genNotifs = uniqueNotifs.map(n => `
-            <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 10px;">
-                <p style="margin: 0; color: var(--text-main); text-align: left; font-size: 12.5px;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; margin-bottom: 8px;">
+                <p style="margin: 0; color: var(--text-main); text-align: left; font-size: 11.5px;">
                     ${n.text}
-                    ${n.unread ? `<span style="background:var(--accent-gold); color:#17181b; padding:2px 6px; border-radius:4px; font-size:9.5px; font-weight:bold; margin-left:6px;">${currentLang === 'ru' ? 'НОВОЕ!' : 'NEW!'}</span>` : ''}
+                    ${n.unread ? `<span style="background:var(--accent-gold); color:#17181b; padding:2px 5px; border-radius:4px; font-size:9px; font-weight:bold; margin-left:4px;">${currentLang === 'ru' ? 'НОВОЕ!' : 'NEW!'}</span>` : ''}
                 </p>
             </div>
         `).join('');
@@ -2126,15 +2160,15 @@
         }
 
         container.innerHTML = appData.pendingClans.map(req => `
-            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 14px; max-width: 520px; overflow: hidden;">
-                <img src="${req.photo}" style="width:100%; height:110px; object-fit:cover;" alt="Banner">
-                <div style="padding: 14px;">
-                    <p style="text-align: left; margin-bottom: 4px; font-size: 12.5px;"><b>${currentLang === 'ru' ? 'Создатель:' : 'Creator:'}</b> ${req.user_name} (ID: ${req.user_id})</p>
-                    <p style="text-align: left; margin-bottom: 4px; font-size: 12.5px;"><b>${currentLang === 'ru' ? 'Клан:' : 'Clan:'}</b> ${req.name} | <b>${currentLang === 'ru' ? 'Тег:' : 'Tag:'}</b> ${req.tag}</p>
-                    <p style="text-align: left; margin-bottom: 12px; font-size: 12.5px;"><b>${currentLang === 'ru' ? 'Описание:' : 'Description:'}</b> ${req.description || (currentLang === 'ru' ? 'Нет описания' : 'No description')}</p>
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; width: 100%; overflow: hidden;">
+                <img src="${req.photo}" style="width:100%; height:100px; object-fit:cover;" alt="Banner">
+                <div style="padding: 12px;">
+                    <p style="text-align: left; margin-bottom: 4px; font-size: 11.5px;"><b>${currentLang === 'ru' ? 'Создатель:' : 'Creator:'}</b> ${req.user_name} (ID: ${req.user_id})</p>
+                    <p style="text-align: left; margin-bottom: 4px; font-size: 11.5px;"><b>${currentLang === 'ru' ? 'Клан:' : 'Clan:'}</b> ${req.name} | <b>${currentLang === 'ru' ? 'Тег:' : 'Tag:'}</b> ${req.tag}</p>
+                    <p style="text-align: left; margin-bottom: 10px; font-size: 11.5px;"><b>${currentLang === 'ru' ? 'Описание:' : 'Description:'}</b> ${req.description || (currentLang === 'ru' ? 'Нет описания' : 'No description')}</p>
                     <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-gold" style="margin: 0; padding: 8px;" onclick="approveClan('${req.id}')">${currentLang === 'ru' ? 'Принять' : 'Accept'}</button>
-                        <button class="btn btn-danger" style="margin: 0; padding: 8px;" onclick="openRejectModal('${req.id}')">${currentLang === 'ru' ? 'Отклонить' : 'Reject'}</button>
+                        <button class="btn btn-gold" style="margin: 0; padding: 7px;" onclick="approveClan('${req.id}')">${currentLang === 'ru' ? 'Принять' : 'Accept'}</button>
+                        <button class="btn btn-danger" style="margin: 0; padding: 7px;" onclick="openRejectModal('${req.id}')">${currentLang === 'ru' ? 'Отклонить' : 'Reject'}</button>
                     </div>
                 </div>
             </div>
@@ -2156,21 +2190,24 @@
             owner_id: req.user_id
         };
 
-        await sb.from('clans').insert([newClan]);
-        await sb.from('profiles').update({ clan_id: newClanId }).eq('id', req.user_id);
-        await sb.from('pending_clans').delete().eq('id', reqId);
+        try {
+            await sb.from('clans').insert([newClan]);
+            await sb.from('profiles').update({ clan_id: newClanId }).eq('id', req.user_id);
+            await sb.from('pending_clans').delete().eq('id', reqId);
 
-        const notif = {
-            id: Date.now() + '_' + Math.floor(Math.random()*1000),
-            text: currentLang === 'ru' ? `Поздравляем! Ваша заявка на клан "${req.name}" одобрена!` : `Congratulations! Your request for clan "${req.name}" has been approved!`,
-            unread: true
-        };
-        await sb.from('notifications').insert([notif]);
+            const notif = {
+                id: Date.now() + '_' + Math.floor(Math.random()*1000),
+                text: currentLang === 'ru' ? `Поздравляем! Ваша заявка на клан "${req.name}" одобрена!` : `Congratulations! Your request for clan "${req.name}" has been approved!`,
+                unread: true
+            };
+            await sb.from('notifications').insert([notif]);
+        } catch(e) {}
 
         if (req.user_id === currentUser.id) {
             currentUser.clanId = newClanId;
             currentUser.clan_id = newClanId;
             localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+            sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
         }
 
         hideLoader();
@@ -2199,14 +2236,16 @@
         showLoader(currentLang === 'ru' ? 'ОТКЛОНЕНИЕ...' : 'REJECTING...');
         const req = appData.pendingClans.find(r => r.id === currentRejectingClanId);
         if (req) {
-            await sb.from('pending_clans').delete().eq('id', currentRejectingClanId);
-            const notifText = currentLang === 'ru' ? `Ваша заявка на клан "${req.name}" отклонена. Причина: ${reason}` : `Your clan request for "${req.name}" was rejected. Reason: ${reason}`;
-            const notif = {
-                id: Date.now() + '_' + Math.floor(Math.random()*1000),
-                text: notifText,
-                unread: true
-            };
-            await sb.from('notifications').insert([notif]);
+            try {
+                await sb.from('pending_clans').delete().eq('id', currentRejectingClanId);
+                const notifText = currentLang === 'ru' ? `Ваша заявка на клан "${req.name}" отклонена. Причина: ${reason}` : `Your clan request for "${req.name}" was rejected. Reason: ${reason}`;
+                const notif = {
+                    id: Date.now() + '_' + Math.floor(Math.random()*1000),
+                    text: notifText,
+                    unread: true
+                };
+                await sb.from('notifications').insert([notif]);
+            } catch(e) {}
         }
 
         hideLoader();
