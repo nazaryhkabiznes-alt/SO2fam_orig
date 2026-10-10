@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SO2fam - Global Standoff 2 Clan Platform</title>
-    <!-- Подключение Supabase JS Client для подключения сервера -->
+    <!-- Подключение Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -721,8 +721,8 @@
     <div id="screen-auth" class="screen hidden">
         <div class="auth-container">
             <h2 id="t-auth-title">Приветствие в SO2fam</h2>
-            <p id="t-auth-desc">Введите ваш игровой ID и имя пользователя</p>
-            <input type="text" id="auth-id" placeholder="Игровой ID (цифры, не менее 9)" maxlength="15">
+            <p id="t-auth-desc">Введите ваш игровой ID (только цифры, от 9 символов) и имя</p>
+            <input type="text" id="auth-id" placeholder="Игровой ID (например: 123456789)" maxlength="15">
             <input type="text" id="auth-name" placeholder="Имя пользователя" maxlength="25">
             <button class="btn btn-gold" id="t-auth-btn" onclick="registerUser()">Войти в систему</button>
         </div>
@@ -949,6 +949,11 @@
 </div>
 
 <script>
+    // Инициализация Supabase Client
+    const SUPABASE_URL = 'https://vsacaavjrsocaejksacr.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzYWNhYXZqcnNvY2FlamtzYWNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2NTIxOTYsImV4cCI6MjEwNzIyODE5Nn0.DuIXCly1Br5WgFqhXaDf8fg0pCYkHRmXFd5ugHpOoC0';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     let currentLang = 'ru';
 
     const dict = {
@@ -1126,7 +1131,6 @@
         }
     };
 
-    // Список стоп-слов (ругательств) для фильтрации имен
     const badWords = [
         'хуй', 'пизд', 'еб', 'сук', 'бля', 'мраз', 'чмо', 'уеб', 'аху', 'епта', 
         'блять', 'сука', 'гондон', 'пидор', 'педик', 'шлюх', 'трах', 'залуп', 
@@ -1315,37 +1319,53 @@
 
     let regularUserSession = null;
     let isAdminReserveActive = false;
-    let hasUnreadNotifications = false;
+    let editingClanId = null;
 
     let appData = {
-        clans: [
-            { 
-                id: '1', 
-                name: 'Absolute', 
-                tag: '[ABS]', 
-                photo: 'https://via.placeholder.com/700x200/282a2e/f39c12?text=ABSOLUTE+CLAN', 
-                desc: 'Legendary Standoff 2 esports clan.', 
-                ownerId: '200009009',
-                members: [{ id: '200009009', name: 'Administrator [Reserve]', avatar: 'https://via.placeholder.com/150/f39c12/17181b?text=ADMIN', bio: 'Main administrator of SO2fam.' }],
-                chat: [{ senderId: '200009009', senderName: 'Administrator [Reserve]', senderAvatar: 'https://via.placeholder.com/150/f39c12/17181b?text=ADMIN', senderBio: 'Main administrator.', text: 'Welcome to Absolute clan!' }]
-            }
-        ],
+        clans: [],
         pendingClans: [],
         notifications: [],
         joinRequests: []
     };
 
-    let currentRejectingClanId = null;
-    let editingClanId = null;
+    // Загрузка данных из Supabase
+    async function fetchAppDataFromSupabase() {
+        showLoader();
+        try {
+            const { data: clansData } = await sb.from('clans').select('*');
+            const { data: membersData } = await sb.from('profiles').select('*');
+            const { data: chatData } = await sb.from('clan_chat').select('*');
+            const { data: reqsData } = await sb.from('join_requests').select('*');
+            const { data: pendingData } = await sb.from('pending_clans').select('*');
+            const { data: notifsData } = await sb.from('notifications').select('*');
 
-    function checkUnreadStatus() {
+            appData.clans = (clansData || []).map(c => ({
+                ...c,
+                desc: c.description,
+                members: (membersData || []).filter(m => m.clan_id === c.id),
+                chat: (chatData || []).filter(ch => ch.clan_id === c.id)
+            }));
+
+            appData.joinRequests = reqsData || [];
+            appData.pendingClans = pendingData || [];
+            appData.notifications = notifsData || [];
+            
+            checkUnreadStatus();
+        } catch (err) {
+            console.error('Error fetching from Supabase:', err);
+        } finally {
+            hideLoader();
+        }
+    }
+
+    async function checkUnreadStatus() {
         const dot = document.getElementById('notif-red-dot');
         if (!dot) return;
 
         let hasUnread = false;
         const myRequests = (appData.joinRequests || []).filter(r => {
-            const clan = appData.clans.find(c => c.id === r.clanId);
-            return clan && clan.ownerId === currentUser.id && r.unread;
+            const clan = appData.clans.find(c => c.id === r.clan_id);
+            return clan && clan.owner_id === currentUser.id && r.unread;
         });
         if (myRequests.length > 0) hasUnread = true;
 
@@ -1371,11 +1391,10 @@
         document.getElementById('screen-auth').classList.remove('hidden');
     }
 
-    function registerUser() {
+    async function registerUser() {
         const idInput = document.getElementById('auth-id').value.trim();
         const nameInput = document.getElementById('auth-name').value.trim();
 
-        // Проверка ID: только цифры, длина >= 9
         const isNumeric = /^\d+$/.test(idInput);
         if (!isNumeric || idInput.length < 9) {
             showSiteAlert(currentLang === 'ru' ? 'Игровой ID должен состоять только из цифр и содержать не менее 9 символов!' : 'Game ID must contain only digits and be at least 9 characters long!');
@@ -1387,23 +1406,47 @@
             return;
         }
 
-        // Проверка имени на нецензурные слова (мат)
         if (containsProfanity(nameInput)) {
             showSiteAlert(currentLang === 'ru' ? 'Имя пользователя содержит запрещенные слова (ругательства)! Пожалуйста, выберите другое имя.' : 'Username contains forbidden words/profanity! Please choose another name.');
             return;
         }
 
-        currentUser.id = idInput;
-        currentUser.name = nameInput;
+        showLoader(currentLang === 'ru' ? 'АВТОРИЗАЦИЯ...' : 'SIGNING IN...');
 
-        // Генерация случайного красивого аватара для нового пользователя, если он еще не задан
-        if (!currentUser.avatar) {
-            const randomSeed = Math.random().toString(36).substring(2, 9);
-            currentUser.avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}&backgroundColor=f39c12`;
+        const randomSeed = Math.random().toString(36).substring(2, 9);
+        const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}&backgroundColor=f39c12`;
+
+        try {
+            // Проверяем, есть ли профиль в базе
+            let { data: existingProfile } = await sb.from('profiles').select('*').eq('id', idInput).single();
+
+            if (!existingProfile) {
+                const newProf = {
+                    id: idInput,
+                    name: nameInput,
+                    avatar: defaultAvatar,
+                    bio: currentUser.bio,
+                    clan_id: null
+                };
+                await sb.from('profiles').insert([newProf]);
+                currentUser = newProf;
+            } else {
+                currentUser = {
+                    id: existingProfile.id,
+                    name: existingProfile.name,
+                    avatar: existingProfile.avatar || defaultAvatar,
+                    bio: existingProfile.bio,
+                    clanId: existingProfile.clan_id
+                };
+            }
+
+            hideLoader();
+            document.getElementById('screen-auth').classList.add('hidden');
+            document.getElementById('screen-welcome-info').classList.remove('hidden');
+        } catch (err) {
+            hideLoader();
+            showSiteAlert('Database error: ' + err.message);
         }
-
-        document.getElementById('screen-auth').classList.add('hidden');
-        document.getElementById('screen-welcome-info').classList.remove('hidden');
     }
 
     function goToHubChoice() {
@@ -1417,14 +1460,14 @@
         document.getElementById('privacy-push').classList.add('hidden');
     }
 
-    function openMainApp() {
+    async function openMainApp() {
+        await fetchAppDataFromSupabase();
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         document.getElementById('screen-main').classList.remove('hidden');
         switchView('feed', document.querySelector('.nav-item'), 0);
         renderFeed();
         renderProfile();
         renderNotifications();
-        checkUnreadStatus();
     }
 
     function showCreateClanScreen() {
@@ -1456,20 +1499,17 @@
         }
     }
 
-    function markNotificationsAsRead() {
-        if (appData.joinRequests) {
-            appData.joinRequests.forEach(r => {
-                const clan = appData.clans.find(c => c.id === r.clanId);
-                if (clan && clan.ownerId === currentUser.id) r.unread = false;
-            });
-        }
-        if (appData.notifications) {
+    async function markNotificationsAsRead() {
+        try {
+            await sb.from('join_requests').update({ unread: false }).eq('owner_id', currentUser.id);
+            await sb.from('notifications').update({ unread: false });
+            appData.joinRequests.forEach(r => { if (r.owner_id === currentUser.id) r.unread = false; });
             appData.notifications.forEach(n => n.unread = false);
-        }
-        checkUnreadStatus();
+            checkUnreadStatus();
+        } catch(e) {}
     }
 
-    function inlineEditName() {
+    async function inlineEditName() {
         const newName = prompt(currentLang === 'ru' ? 'Введите новое имя пользователя:' : 'Enter new username:', currentUser.name);
         if (newName && newName.trim()) {
             const trimmed = newName.trim();
@@ -1478,12 +1518,13 @@
                 return;
             }
             currentUser.name = trimmed;
+            await sb.from('profiles').update({ name: trimmed }).eq('id', currentUser.id);
             renderProfile();
             showToast(dict[currentLang].toastProfileUpd, currentLang === 'ru' ? 'Имя успешно изменено!' : 'Username changed successfully!');
         }
     }
 
-    function editUserBio() {
+    async function editUserBio() {
         const newBio = prompt(currentLang === 'ru' ? 'Введите описание (портфолио) вашего профиля:' : 'Enter your profile bio/portfolio:', currentUser.bio || '');
         if (newBio !== null) {
             const trimmed = newBio.trim();
@@ -1492,6 +1533,7 @@
                 return;
             }
             currentUser.bio = trimmed;
+            await sb.from('profiles').update({ bio: trimmed }).eq('id', currentUser.id);
             renderProfile();
             showToast(dict[currentLang].toastProfileUpd, dict[currentLang].toastBioSaved);
         }
@@ -1501,14 +1543,17 @@
         document.getElementById('hidden-avatar-input').click();
     }
 
-    function handleAvatarFileSelect(input) {
+    async function handleAvatarFileSelect(input) {
         showLoader(currentLang === 'ru' ? 'ОБРАБОТКА ФОТО...' : 'PROCESSING PHOTO...');
-        convertFileToBase64(input, function(base64Image) {
-            hideLoader();
+        convertFileToBase64(input, async function(base64Image) {
             if (base64Image) {
                 currentUser.avatar = base64Image;
+                await sb.from('profiles').update({ avatar: base64Image }).eq('id', currentUser.id);
+                hideLoader();
                 renderProfile();
                 showToast(dict[currentLang].toastProfileUpd, dict[currentLang].toastProfileSaved);
+            } else {
+                hideLoader();
             }
         });
     }
@@ -1526,7 +1571,7 @@
         let userClanObj = null;
         let isClanOwner = false;
         for (let clan of appData.clans) {
-            if (clan.ownerId === userId || clan.ownerId === name) {
+            if (clan.owner_id === userId || clan.owner_id === name) {
                 userClanObj = clan;
                 isClanOwner = true;
                 break;
@@ -1577,11 +1622,11 @@
                 }
             }
             if (clan.chat) {
-                const msg = clan.chat.find(x => x.senderId === userId || x.senderName === userName);
+                const msg = clan.chat.find(x => x.sender_id === userId || x.sender_name === userName);
                 if (msg) {
-                    if (msg.senderAvatar) foundAvatar = msg.senderAvatar;
-                    if (msg.senderBio) foundBio = msg.senderBio;
-                    if (msg.senderId) foundId = msg.senderId;
+                    if (msg.sender_avatar) foundAvatar = msg.sender_avatar;
+                    if (msg.sender_bio) foundBio = msg.sender_bio;
+                    if (msg.sender_id) foundId = msg.sender_id;
                     break;
                 }
             }
@@ -1613,10 +1658,10 @@
         if (!clan) return;
 
         const d = dict[currentLang];
-        const isOwner = clan.ownerId === currentUser.id;
-        const isMember = currentUser.clanId === clanId;
+        const isOwner = clan.owner_id === currentUser.id;
+        const isMember = currentUser.clanId === clanId || currentUser.clan_id === clanId;
 
-        let membersHtml = clan.members ? clan.members.map(m => `
+        let membersHtml = clan.members && clan.members.length > 0 ? clan.members.map(m => `
             <div class="member-chip" onclick="viewUserPortfolio('${m.id || ''}', '${m.name || 'Player'}')">
                 <img src="${m.avatar || 'https://via.placeholder.com/50'}"> ${m.name || 'Player'}
             </div>
@@ -1624,11 +1669,11 @@
 
         let chatSection = '';
         if (isOwner || isMember) {
-            let chatHtml = clan.chat ? clan.chat.map(msg => `
+            let chatHtml = clan.chat && clan.chat.length > 0 ? clan.chat.map(msg => `
                 <div class="tg-msg">
-                    <img src="${msg.senderAvatar || 'https://via.placeholder.com/50'}" onclick="viewUserPortfolio('${msg.senderId || ''}', '${msg.senderName || 'Player'}')">
+                    <img src="${msg.sender_avatar || 'https://via.placeholder.com/50'}" onclick="viewUserPortfolio('${msg.sender_id || ''}', '${msg.sender_name || 'Player'}')">
                     <div class="tg-msg-bubble">
-                        <div class="tg-msg-author" onclick="viewUserPortfolio('${msg.senderId || ''}', '${msg.senderName || 'Player'}')">${msg.senderName || 'Player'}</div>
+                        <div class="tg-msg-author" onclick="viewUserPortfolio('${msg.sender_id || ''}', '${msg.sender_name || 'Player'}')">${msg.sender_name || 'Player'}</div>
                         <div>${msg.text}</div>
                     </div>
                 </div>
@@ -1676,7 +1721,7 @@
                 <div class="clan-detail-body">
                     <h2 style="margin-bottom: 4px; text-align: left; color: var(--text-main);">${clan.name}</h2>
                     <div class="badge-tag">${clan.tag}</div>
-                    <p style="margin: 10px 0; text-align: left; font-size: 12.5px; color: var(--text-muted);">${clan.desc || (currentLang === 'ru' ? 'Описание отсутствует.' : 'No description.')}</p>
+                    <p style="margin: 10px 0; text-align: left; font-size: 12.5px; color: var(--text-muted);">${clan.description || clan.desc || (currentLang === 'ru' ? 'Описание отсутствует.' : 'No description.')}</p>
                     
                     <h3 style="font-size: 12px; text-align: left; margin-top: 18px; color: var(--accent-gold);">${currentLang === 'ru' ? 'Участники клана' : 'Clan Members'} (${clan.members ? clan.members.length : 0}):</h3>
                     <div class="members-list">
@@ -1701,7 +1746,7 @@
         }
     }
 
-    function sendClanMessage(clanId) {
+    async function sendClanMessage(clanId) {
         const input = document.getElementById('clan-chat-input');
         if (!input) return;
         const text = input.value.trim();
@@ -1712,36 +1757,18 @@
             return;
         }
 
-        const clan = appData.clans.find(c => c.id === clanId);
-        if (!clan) return;
-
-        if (!clan.chat) clan.chat = [];
-        clan.chat.push({
-            senderId: currentUser.id,
-            senderName: currentUser.name,
-            senderAvatar: currentUser.avatar || 'https://via.placeholder.com/150/282a2e/f39c12?text=SO2',
-            senderBio: currentUser.bio || '',
+        const newMsg = {
+            clan_id: clanId,
+            sender_id: currentUser.id,
+            sender_name: currentUser.name,
+            sender_avatar: currentUser.avatar || 'https://via.placeholder.com/150/282a2e/f39c12?text=SO2',
+            sender_bio: currentUser.bio || '',
             text: text
-        });
+        };
 
-        const chatBox = document.getElementById('clan-chat-messages');
-        if (chatBox) {
-            const placeholder = chatBox.querySelector('p');
-            if (placeholder) placeholder.remove();
-
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'tg-msg';
-            msgDiv.innerHTML = `
-                <img src="${currentUser.avatar || 'https://via.placeholder.com/50'}" onclick="viewUserPortfolio('${currentUser.id}', '${currentUser.name}')">
-                <div class="tg-msg-bubble">
-                    <div class="tg-msg-author" onclick="viewUserPortfolio('${currentUser.id}', '${currentUser.name}')">${currentUser.name}</div>
-                    <div>${text}</div>
-                </div>
-            `;
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-        input.value = '';
+        await sb.from('clan_chat').insert([newMsg]);
+        await fetchAppDataFromSupabase();
+        openClanDetail(clanId);
     }
 
     function openEditClanModal(clanId) {
@@ -1750,7 +1777,7 @@
 
         editingClanId = clanId;
         document.getElementById('edit-clan-readonly-info').innerText = currentLang === 'ru' ? `Клан: ${clan.name} ${clan.tag} (Имя и тег менять нельзя)` : `Clan: ${clan.name} ${clan.tag} (Name and tag cannot be changed)`;
-        document.getElementById('edit-clan-desc').value = clan.desc || '';
+        document.getElementById('edit-clan-desc').value = clan.description || clan.desc || '';
         document.getElementById('edit-clan-photo-file').value = '';
         document.getElementById('edit-clan-modal').classList.remove('hidden');
     }
@@ -1760,7 +1787,7 @@
         document.getElementById('edit-clan-modal').classList.add('hidden');
     }
 
-    function saveClanEdits() {
+    async function saveClanEdits() {
         const clan = appData.clans.find(c => c.id === editingClanId);
         if (!clan) return;
 
@@ -1773,93 +1800,89 @@
         const fileInput = document.getElementById('edit-clan-photo-file');
 
         showLoader(currentLang === 'ru' ? 'СОХРАНЕНИЕ...' : 'SAVING...');
-        convertFileToBase64(fileInput, function(base64Photo) {
-            hideLoader();
-            clan.desc = desc;
-            if (base64Photo) clan.photo = base64Photo;
+        convertFileToBase64(fileInput, async function(base64Photo) {
+            let updatePayload = { description: desc };
+            if (base64Photo) updatePayload.photo = base64Photo;
 
+            await sb.from('clans').update(updatePayload).eq('id', editingClanId);
+            hideLoader();
             closeEditClanModal();
+            await fetchAppDataFromSupabase();
             openClanDetail(editingClanId);
             showToast(dict[currentLang].toastClanUpd, dict[currentLang].toastClanSaved);
         });
     }
 
-    function sendJoinRequest(clanId) {
+    async function sendJoinRequest(clanId) {
         const clan = appData.clans.find(c => c.id === clanId);
         if (!clan) return;
 
-        if (currentUser.clanId) {
+        if (currentUser.clanId || currentUser.clan_id) {
             showSiteAlert(currentLang === 'ru' ? 'Вы уже состоите в другом клане!' : 'You are already in another clan!');
             return;
         }
 
         const requestObj = {
             id: 'req_' + Date.now(),
-            clanId: clanId,
-            clanName: clan.name,
-            ownerId: clan.ownerId,
-            userId: currentUser.id,
-            userName: currentUser.name,
-            userAvatar: currentUser.avatar,
-            userBio: currentUser.bio,
+            clan_id: clanId,
+            clan_name: clan.name,
+            owner_id: clan.owner_id,
+            user_id: currentUser.id,
+            user_name: currentUser.name,
+            user_avatar: currentUser.avatar,
+            user_bio: currentUser.bio,
             unread: true
         };
 
-        if (!appData.joinRequests) appData.joinRequests = [];
-        appData.joinRequests.push(requestObj);
-
-        hasUnreadNotifications = true;
-        checkUnreadStatus();
+        await sb.from('join_requests').insert([requestObj]);
+        await fetchAppDataFromSupabase();
 
         showToast(dict[currentLang].toastReq, dict[currentLang].toastReqSent);
         renderNotifications();
     }
 
-    function confirmDeleteClan(clanId) {
+    async function confirmDeleteClan(clanId) {
         if (!confirm(currentLang === 'ru' ? 'Вы действительно хотите удалить свой клан? Это действие необратимо.' : 'Do you really want to delete your clan? This is irreversible.')) return;
         if (!confirm(currentLang === 'ru' ? 'ТОЧНО УДОСТОВЕРЬТЕСЬ: Вы хотите полностью удалить клан со всеми участниками?' : 'CONFIRM: Do you want to completely delete the clan with all members?')) return;
 
         showLoader(currentLang === 'ru' ? 'УДАЛЕНИЕ КЛАНА...' : 'DELETING CLAN...');
-        setTimeout(() => {
-            hideLoader();
-            appData.clans = appData.clans.filter(c => c.id !== clanId);
-            if (currentUser.clanId === clanId) currentUser.clanId = null;
-            showSiteAlert(currentLang === 'ru' ? 'Клан успешно удален.' : 'Clan successfully deleted.', () => {
-                openMainApp();
-            });
-        }, 400);
-    }
-
-    function acceptJoinRequest(reqId) {
-        const reqIndex = appData.joinRequests.findIndex(r => r.id === reqId);
-        if (reqIndex === -1) return;
-
-        const req = appData.joinRequests[reqIndex];
-        const clan = appData.clans.find(c => c.id === req.clanId);
-
-        if (clan) {
-            if (!clan.members) clan.members = [];
-            clan.members.push({ id: req.userId, name: req.userName, avatar: req.userAvatar, bio: req.userBio });
+        await sb.from('clans').delete().eq('id', clanId);
+        await sb.from('profiles').update({ clan_id: null }).eq('clan_id', clanId);
+        
+        if (currentUser.clanId === clanId || currentUser.clan_id === clanId) {
+            currentUser.clanId = null;
+            currentUser.clan_id = null;
         }
 
-        appData.joinRequests.splice(reqIndex, 1);
-        appData.notifications.unshift({
-            id: Date.now(),
-            text: currentLang === 'ru' ? `Заявка игрока ${req.userName} на вступление в клан ${req.clanName} была принята.` : `Player ${req.userName}'s request to join ${req.clanName} was accepted.`,
-            unread: true
+        hideLoader();
+        await fetchAppDataFromSupabase();
+        showSiteAlert(currentLang === 'ru' ? 'Клан успешно удален.' : 'Clan successfully deleted.', () => {
+            openMainApp();
         });
+    }
 
-        hasUnreadNotifications = true;
-        checkUnreadStatus();
+    async function acceptJoinRequest(reqId) {
+        const req = appData.joinRequests.find(r => r.id === reqId);
+        if (!req) return;
+
+        await sb.from('profiles').update({ clan_id: req.clan_id }).eq('id', req.user_id);
+        await sb.from('join_requests').delete().eq('id', reqId);
+
+        const notif = {
+            id: Date.now(),
+            text: currentLang === 'ru' ? `Заявка игрока ${req.user_name} на вступление в клан ${req.clan_name} была принята.` : `Player ${req.user_name}'s request to join ${req.clan_name} was accepted.`,
+            unread: true
+        };
+        await sb.from('notifications').insert([notif]);
+
+        await fetchAppDataFromSupabase();
         renderNotifications();
         showToast(dict[currentLang].toastReq, dict[currentLang].toastJoinAcc);
     }
 
-    function rejectJoinRequest(reqId) {
-        const reqIndex = appData.joinRequests.findIndex(r => r.id === reqId);
-        if (reqIndex === -1) return;
-
-        appData.joinRequests.splice(reqIndex, 1);
+    async function rejectJoinRequest(reqId) {
+        await sb.from('join_requests').delete().eq('id', reqId);
+        await fetchAppDataFromSupabase();
         renderNotifications();
         showToast(dict[currentLang].toastReq, dict[currentLang].toastJoinRej);
     }
@@ -1881,19 +1904,19 @@
         }
 
         showLoader(currentLang === 'ru' ? 'ОБРАБОТКА...' : 'PROCESSING...');
-        convertFileToBase64(fileInput, function(base64Photo) {
-            hideLoader();
+        convertFileToBase64(fileInput, async function(base64Photo) {
             const newClanReq = {
                 id: 'reqclan_' + Date.now(),
-                userId: currentUser.id,
-                userName: currentUser.name,
+                user_id: currentUser.id,
+                user_name: currentUser.name,
                 name: name,
                 tag: tag,
                 photo: base64Photo || 'https://via.placeholder.com/700x200/282a2e/f39c12?text=CLAN',
-                desc: desc
+                description: desc
             };
 
-            appData.pendingClans.push(newClanReq);
+            await sb.from('pending_clans').insert([newClanReq]);
+            hideLoader();
             document.getElementById('status-modal').classList.remove('hidden');
         });
     }
@@ -1911,14 +1934,15 @@
         document.getElementById('profile-display-bio').innerText = currentUser.bio || d.bioDefault;
 
         const clanSection = document.getElementById('profile-clan-section');
-        if (currentUser.clanId) {
-            const userClan = appData.clans.find(c => c.id === currentUser.clanId);
+        const userClanId = currentUser.clanId || currentUser.clan_id;
+        if (userClanId) {
+            const userClan = appData.clans.find(c => c.id === userClanId);
             clanSection.innerHTML = `
-                <div style="background: rgba(243,156,18,0.1); border: 1px solid var(--accent-gold); padding: 12px; border-radius: 8px; margin-bottom: 12px; cursor: pointer;" onclick="openClanDetail('${currentUser.clanId}')">
+                <div style="background: rgba(243,156,18,0.1); border: 1px solid var(--accent-gold); padding: 12px; border-radius: 8px; margin-bottom: 12px; cursor: pointer;" onclick="openClanDetail('${userClanId}')">
                     <p style="color: var(--text-muted); font-size: 11px; margin-bottom: 2px;">${currentLang === 'ru' ? 'ВАШ КЛАН:' : 'YOUR CLAN:'}</p>
                     <p style="color: var(--accent-gold); font-size: 14px; font-weight: bold; margin: 0;">${userClan ? userClan.name + ' ' + userClan.tag : 'Clan'}</p>
                 </div>
-                <button class="btn btn-gold" style="margin-bottom: 6px; padding: 8px;" onclick="openClanDetail('${currentUser.clanId}')">${d.btnGoClan}</button>
+                <button class="btn btn-gold" style="margin-bottom: 6px; padding: 8px;" onclick="openClanDetail('${userClanId}')">${d.btnGoClan}</button>
                 <button class="btn btn-danger" style="padding: 8px;" onclick="leaveClan()">${d.btnLeave}</button>
             `;
         } else {
@@ -1937,8 +1961,11 @@
         }
     }
 
-    function leaveClan() {
+    async function leaveClan() {
+        await sb.from('profiles').update({ clan_id: null }).eq('id', currentUser.id);
         currentUser.clanId = null;
+        currentUser.clan_id = null;
+        await fetchAppDataFromSupabase();
         renderProfile();
         showToast(dict[currentLang].toastClanUpd, currentLang === 'ru' ? 'Вы покинули клан.' : 'You left the clan.');
     }
@@ -1949,8 +1976,8 @@
         
         let requestsHtml = '';
         const myRequests = (appData.joinRequests || []).filter(r => {
-            const clan = appData.clans.find(c => c.id === r.clanId);
-            return clan && clan.ownerId === currentUser.id;
+            const clan = appData.clans.find(c => c.id === r.clan_id);
+            return clan && clan.owner_id === currentUser.id;
         });
 
         if (myRequests.length > 0) {
@@ -1958,10 +1985,10 @@
             myRequests.map(req => `
                 <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <img src="${req.userAvatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor:pointer;" onclick="viewUserPortfolio('${req.userId}', '${req.userName}')">
+                        <img src="${req.user_avatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor:pointer;" onclick="viewUserPortfolio('${req.user_id}', '${req.user_name}')">
                         <div style="text-align: left;">
                             <p style="margin:0; font-size: 12.5px; color: var(--text-main);">
-                                <b>${req.userName}</b> ${currentLang === 'ru' ? 'хочет вступить в' : 'wants to join'} <b>${req.clanName}</b>
+                                <b>${req.user_name}</b> ${currentLang === 'ru' ? 'хочет вступить в' : 'wants to join'} <b>${req.clan_name}</b>
                                 ${req.unread ? `<span style="background:var(--accent-gold); color:#17181b; padding:2px 6px; border-radius:4px; font-size:9.5px; font-weight:bold; margin-left:6px;">${currentLang === 'ru' ? 'НОВОЕ!' : 'NEW!'}</span>` : ''}
                             </p>
                         </div>
@@ -2048,9 +2075,9 @@
             <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 14px; max-width: 520px; overflow: hidden;">
                 <img src="${req.photo}" style="width:100%; height:110px; object-fit:cover;" alt="Banner">
                 <div style="padding: 14px;">
-                    <p style="text-align: left; margin-bottom: 4px; font-size: 12.5px;"><b>${currentLang === 'ru' ? 'Создатель:' : 'Creator:'}</b> ${req.userName} (ID: ${req.userId})</p>
+                    <p style="text-align: left; margin-bottom: 4px; font-size: 12.5px;"><b>${currentLang === 'ru' ? 'Создатель:' : 'Creator:'}</b> ${req.user_name} (ID: ${req.user_id})</p>
                     <p style="text-align: left; margin-bottom: 4px; font-size: 12.5px;"><b>${currentLang === 'ru' ? 'Клан:' : 'Clan:'}</b> ${req.name} | <b>${currentLang === 'ru' ? 'Тег:' : 'Tag:'}</b> ${req.tag}</p>
-                    <p style="text-align: left; margin-bottom: 12px; font-size: 12.5px;"><b>${currentLang === 'ru' ? 'Описание:' : 'Description:'}</b> ${req.desc || (currentLang === 'ru' ? 'Нет описания' : 'No description')}</p>
+                    <p style="text-align: left; margin-bottom: 12px; font-size: 12.5px;"><b>${currentLang === 'ru' ? 'Описание:' : 'Description:'}</b> ${req.description || (currentLang === 'ru' ? 'Нет описания' : 'No description')}</p>
                     <div style="display: flex; gap: 8px;">
                         <button class="btn btn-gold" style="margin: 0; padding: 8px;" onclick="approveClan('${req.id}')">${currentLang === 'ru' ? 'Принять' : 'Accept'}</button>
                         <button class="btn btn-danger" style="margin: 0; padding: 8px;" onclick="openRejectModal('${req.id}')">${currentLang === 'ru' ? 'Отклонить' : 'Reject'}</button>
@@ -2060,44 +2087,41 @@
         `).join('');
     }
 
-    function approveClan(reqId) {
+    async function approveClan(reqId) {
         showLoader(currentLang === 'ru' ? 'СОЗДАНИЕ...' : 'CREATING...');
-        setTimeout(() => {
-            hideLoader();
-            const reqIndex = appData.pendingClans.findIndex(r => r.id === reqId);
-            if (reqIndex === -1) return;
+        const req = appData.pendingClans.find(r => r.id === reqId);
+        if (!req) { hideLoader(); return; }
 
-            const req = appData.pendingClans[reqIndex];
-            const newClanId = 'clan_' + Date.now();
-            const newClan = {
-                id: newClanId,
-                name: req.name,
-                tag: req.tag,
-                photo: req.photo,
-                desc: req.desc,
-                ownerId: req.userId,
-                members: [{ id: req.userId, name: req.userName, avatar: currentUser.avatar, bio: currentUser.bio }],
-                chat: []
-            };
+        const newClanId = 'clan_' + Date.now();
+        const newClan = {
+            id: newClanId,
+            name: req.name,
+            tag: req.tag,
+            photo: req.photo,
+            description: req.description,
+            owner_id: req.user_id
+        };
 
-            appData.clans.push(newClan);
-            appData.pendingClans.splice(reqIndex, 1);
+        await sb.from('clans').insert([newClan]);
+        await sb.from('profiles').update({ clan_id: newClanId }).eq('id', req.user_id);
+        await sb.from('pending_clans').delete().eq('id', reqId);
 
-            if (req.userId === currentUser.id) {
-                currentUser.clanId = newClanId;
-            }
+        const notif = {
+            id: Date.now(),
+            text: currentLang === 'ru' ? `Поздравляем! Ваша заявка на клан "${req.name}" одобрена!` : `Congratulations! Your request for clan "${req.name}" has been approved!`,
+            unread: true
+        };
+        await sb.from('notifications').insert([notif]);
 
-            appData.notifications.unshift({
-                id: Date.now(),
-                text: currentLang === 'ru' ? `Поздравляем! Ваша заявка на клан "${req.name}" одобрена!` : `Congratulations! Your request for clan "${req.name}" has been approved!`,
-                unread: true
-            });
+        if (req.user_id === currentUser.id) {
+            currentUser.clanId = newClanId;
+            currentUser.clan_id = newClanId;
+        }
 
-            hasUnreadNotifications = true;
-            checkUnreadStatus();
-            renderAdminRequests();
-            showToast(dict[currentLang].toastMod, `Clan "${req.name}" ${dict[currentLang].toastApproved}`);
-        }, 300);
+        hideLoader();
+        await fetchAppDataFromSupabase();
+        renderAdminRequests();
+        showToast(dict[currentLang].toastMod, `Clan "${req.name}" ${dict[currentLang].toastApproved}`);
     }
 
     function openRejectModal(reqId) {
@@ -2110,7 +2134,7 @@
         document.getElementById('admin-reject-modal').classList.add('hidden');
     }
 
-    function confirmRejectClan() {
+    async function confirmRejectClan() {
         const reason = document.getElementById('reject-reason-input').value.trim();
         if (!reason) {
             showSiteAlert(currentLang === 'ru' ? 'Введите причину отклонения.' : 'Please enter a rejection reason.');
@@ -2118,26 +2142,22 @@
         }
 
         showLoader(currentLang === 'ru' ? 'ОТКЛОНЕНИЕ...' : 'REJECTING...');
-        setTimeout(() => {
-            hideLoader();
-            const reqIndex = appData.pendingClans.findIndex(r => r.id === currentRejectingClanId);
-            if (reqIndex !== -1) {
-                const req = appData.pendingClans[reqIndex];
-                appData.pendingClans.splice(reqIndex, 1);
+        const req = appData.pendingClans.find(r => r.id === currentRejectingClanId);
+        if (req) {
+            await sb.from('pending_clans').delete().eq('id', currentRejectingClanId);
+            const notif = {
+                id: Date.now(),
+                text: currentLang === 'ru' ? `Ваша заявка на клан "${req.name}" отклонена. Причина: ${reason}` : `Your clan request for "${req.name}" was rejected. Reason: ${reason}`,
+                unread: true
+            };
+            await sb.from('notifications').insert([notif]);
+        }
 
-                appData.notifications.unshift({
-                    id: Date.now(),
-                    text: currentLang === 'ru' ? `Ваша заявка на клан "${req.name}" отклонена. Причина: ${reason}` : `Your clan request for "${req.name}" was rejected. Reason: ${reason}`,
-                    unread: true
-                });
-                hasUnreadNotifications = true;
-                checkUnreadStatus();
-            }
-
-            closeRejectModal();
-            renderAdminRequests();
-            showToast(dict[currentLang].toastMod, dict[currentLang].toastRejected);
-        }, 300);
+        hideLoader();
+        closeRejectModal();
+        await fetchAppDataFromSupabase();
+        renderAdminRequests();
+        showToast(dict[currentLang].toastMod, dict[currentLang].toastRejected);
     }
 </script>
 
