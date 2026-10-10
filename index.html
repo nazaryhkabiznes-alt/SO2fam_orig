@@ -121,6 +121,14 @@
             text-align: center;
         }
 
+        .creator-watermark {
+            font-size: 10px;
+            color: var(--accent-gold);
+            text-align: center;
+            margin-top: 12px;
+            letter-spacing: 0.5px;
+        }
+
         .btn {
             background: linear-gradient(135deg, #2f3238, #25272c);
             color: var(--text-main);
@@ -714,6 +722,7 @@
             <p>Выберите язык / Choose language</p>
             <button class="btn btn-gold" onclick="setLanguage('ru')">Русский</button>
             <button class="btn" onclick="setLanguage('en')">English</button>
+            <div class="creator-watermark">Создатель: @nazaros2009 (SO2fam 2026®)</div>
         </div>
     </div>
 
@@ -725,6 +734,7 @@
             <input type="text" id="auth-id" placeholder="Игровой ID (например: 123456789)" maxlength="15">
             <input type="text" id="auth-name" placeholder="Имя пользователя" maxlength="25">
             <button class="btn btn-gold" id="t-auth-btn" onclick="registerUser()">Войти в систему</button>
+            <div class="creator-watermark">Создатель: @nazaros2009 (SO2fam 2026®)</div>
         </div>
     </div>
 
@@ -735,6 +745,7 @@
             <p id="t-wel-text" style="text-align: left; font-size: 13px; line-height: 1.6;">Тут используются только настоящие кланы из игры Standoff 2.<br><br>
             <b>Для чего нужен этот сайт:</b> Площадка создана для поиска проверенных кланов, подачи заявок на вступление, общения игроков и создания глобального сообщества без фейков.</p>
             <button class="btn btn-gold" id="t-wel-btn" onclick="goToHubChoice()">Далее</button>
+            <div class="creator-watermark">Создатель: @nazaros2009 (SO2fam 2026®)</div>
         </div>
     </div>
 
@@ -745,6 +756,7 @@
             <p id="t-hub-desc">Куда вы хотите перейти?</p>
             <button class="btn btn-gold" id="t-hub-btn1" onclick="openMainApp()">Перейти на главную</button>
             <button class="btn" id="t-hub-btn2" onclick="showCreateClanScreen()">Добавить свой клан</button>
+            <div class="creator-watermark">Создатель: @nazaros2009 (SO2fam 2026®)</div>
         </div>
     </div>
 
@@ -757,9 +769,10 @@
                 <div id="view-feed" class="view active">
                     <div class="top-bar">
                         <h2 id="t-feed-title">Лента кланов Standoff 2</h2>
-                        <span style="font-size: 10.5px; color: var(--accent-gold); font-weight: 600;">SO2FAM HUB</span>
+                        <span style="font-size: 10.5px; color: var(--accent-gold); font-weight: 600;">SO2FAM 2026®</span>
                     </div>
                     <div id="clans-feed-list" class="clans-grid"></div>
+                    <div class="creator-watermark" style="margin-top: 30px;">Создатель: @nazaros2009 (SO2fam 2026®)</div>
                 </div>
 
                 <!-- Детали клана -->
@@ -811,6 +824,7 @@
                             <div id="admin-reserve-exit" style="margin-top: 15px; display: none;">
                                 <button class="btn btn-danger" id="t-exit-admin-btn" onclick="exitAdminReserveAccount()">Выйти из аккаунта администратора</button>
                             </div>
+                            <div class="creator-watermark" style="margin-top: 20px;">Создатель: @nazaros2009 (SO2fam 2026®)</div>
                         </div>
                     </div>
                 </div>
@@ -831,6 +845,7 @@
                         <input type="text" id="clan-form-tag" placeholder="3. Тег клана (например: [FAM])">
                         <textarea id="clan-form-desc" placeholder="Описание клана" rows="3"></textarea>
                         <button class="btn btn-gold" id="t-create-submit" onclick="submitClanCreation()">Создать заявку +</button>
+                        <div class="creator-watermark" style="margin-top: 15px;">Создатель: @nazaros2009 (SO2fam 2026®)</div>
                     </div>
                 </div>
 
@@ -1330,7 +1345,6 @@
 
     // Загрузка данных из Supabase
     async function fetchAppDataFromSupabase() {
-        showLoader();
         try {
             const { data: clansData } = await sb.from('clans').select('*');
             const { data: membersData } = await sb.from('profiles').select('*');
@@ -1341,6 +1355,7 @@
 
             appData.clans = (clansData || []).map(c => ({
                 ...c,
+                photo: c.photo || 'https://via.placeholder.com/700x200/282a2e/f39c12?text=SO2+CLAN',
                 desc: c.description,
                 members: (membersData || []).filter(m => m.clan_id === c.id),
                 chat: (chatData || []).filter(ch => ch.clan_id === c.id)
@@ -1353,8 +1368,6 @@
             checkUnreadStatus();
         } catch (err) {
             console.error('Error fetching from Supabase:', err);
-        } finally {
-            hideLoader();
         }
     }
 
@@ -1379,7 +1392,43 @@
         }
     }
 
-    window.onload = function() {
+    // Проверка сессии и параметров URL (для редиректа по приглашению) при загрузке страницы
+    window.onload = async function() {
+        showLoader(currentLang === 'ru' ? 'ЗАГРУЗКА...' : 'LOADING...');
+        await fetchAppDataFromSupabase();
+        hideLoader();
+
+        const savedUserJson = localStorage.getItem('so2fam_current_user');
+        if (savedUserJson) {
+            try {
+                const parsed = JSON.parse(savedUserJson);
+                if (parsed && parsed.id) {
+                    let { data: existingProfile } = await sb.from('profiles').select('*').eq('id', parsed.id).single();
+                    if (existingProfile) {
+                        currentUser = {
+                            id: existingProfile.id,
+                            name: existingProfile.name,
+                            avatar: existingProfile.avatar || parsed.avatar,
+                            bio: existingProfile.bio,
+                            clanId: existingProfile.clan_id
+                        };
+                        
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const inviteClanId = urlParams.get('clan');
+
+                        await openMainApp();
+
+                        if (inviteClanId) {
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                            openClanDetail(inviteClanId);
+                        }
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
         document.getElementById('screen-lang').classList.remove('hidden');
     };
 
@@ -1417,7 +1466,6 @@
         const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}&backgroundColor=f39c12`;
 
         try {
-            // Проверяем, есть ли профиль в базе
             let { data: existingProfile } = await sb.from('profiles').select('*').eq('id', idInput).single();
 
             if (!existingProfile) {
@@ -1440,6 +1488,8 @@
                 };
             }
 
+            localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+
             hideLoader();
             document.getElementById('screen-auth').classList.add('hidden');
             document.getElementById('screen-welcome-info').classList.remove('hidden');
@@ -1461,7 +1511,9 @@
     }
 
     async function openMainApp() {
+        showLoader();
         await fetchAppDataFromSupabase();
+        hideLoader();
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         document.getElementById('screen-main').classList.remove('hidden');
         switchView('feed', document.querySelector('.nav-item'), 0);
@@ -1519,6 +1571,8 @@
             }
             currentUser.name = trimmed;
             await sb.from('profiles').update({ name: trimmed }).eq('id', currentUser.id);
+            await sb.from('clan_chat').update({ sender_name: trimmed }).eq('sender_id', currentUser.id);
+            localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             renderProfile();
             showToast(dict[currentLang].toastProfileUpd, currentLang === 'ru' ? 'Имя успешно изменено!' : 'Username changed successfully!');
         }
@@ -1534,6 +1588,7 @@
             }
             currentUser.bio = trimmed;
             await sb.from('profiles').update({ bio: trimmed }).eq('id', currentUser.id);
+            localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             renderProfile();
             showToast(dict[currentLang].toastProfileUpd, dict[currentLang].toastBioSaved);
         }
@@ -1549,6 +1604,8 @@
             if (base64Image) {
                 currentUser.avatar = base64Image;
                 await sb.from('profiles').update({ avatar: base64Image }).eq('id', currentUser.id);
+                await sb.from('clan_chat').update({ sender_avatar: base64Image }).eq('sender_id', currentUser.id);
+                localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
                 hideLoader();
                 renderProfile();
                 showToast(dict[currentLang].toastProfileUpd, dict[currentLang].toastProfileSaved);
@@ -1644,13 +1701,22 @@
 
         container.innerHTML = appData.clans.map(clan => `
             <div class="clan-card" onclick="openClanDetail('${clan.id}')">
-                <img src="${clan.photo || 'https://via.placeholder.com/56'}" class="clan-avatar" alt="clan">
+                <img src="${clan.photo || 'https://via.placeholder.com/56/282a2e/f39c12?text=SO2'}" class="clan-avatar" alt="clan">
                 <div class="clan-info">
                     <h4>${clan.name}</h4>
                     <span>${clan.tag}</span>
                 </div>
             </div>
         `).join('');
+    }
+
+    function copyInviteLink(clanId) {
+        const inviteUrl = `${window.location.origin}${window.location.pathname}?clan=${clanId}`;
+        navigator.clipboard.writeText(inviteUrl).then(() => {
+            showToast(currentLang === 'ru' ? 'Ссылка' : 'Link', currentLang === 'ru' ? 'Ссылка для приглашения в клан скопирована в буфер обмена!' : 'Clan invite link copied to clipboard!');
+        }).catch(err => {
+            prompt(currentLang === 'ru' ? 'Скопируйте ссылку для приглашения:' : 'Copy invite link:', inviteUrl);
+        });
     }
 
     function openClanDetail(clanId) {
@@ -1669,15 +1735,21 @@
 
         let chatSection = '';
         if (isOwner || isMember) {
-            let chatHtml = clan.chat && clan.chat.length > 0 ? clan.chat.map(msg => `
-                <div class="tg-msg">
-                    <img src="${msg.sender_avatar || 'https://via.placeholder.com/50'}" onclick="viewUserPortfolio('${msg.sender_id || ''}', '${msg.sender_name || 'Player'}')">
-                    <div class="tg-msg-bubble">
-                        <div class="tg-msg-author" onclick="viewUserPortfolio('${msg.sender_id || ''}', '${msg.sender_name || 'Player'}')">${msg.sender_name || 'Player'}</div>
-                        <div>${msg.text}</div>
+            let chatHtml = clan.chat && clan.chat.length > 0 ? clan.chat.map(msg => {
+                const memberObj = clan.members.find(m => m.id === msg.sender_id);
+                const msgAvatar = memberObj ? memberObj.avatar : (msg.sender_avatar || 'https://via.placeholder.com/50');
+                const msgName = memberObj ? memberObj.name : (msg.sender_name || 'Player');
+
+                return `
+                    <div class="tg-msg">
+                        <img src="${msgAvatar}" onclick="viewUserPortfolio('${msg.sender_id || ''}', '${msgName}')">
+                        <div class="tg-msg-bubble">
+                            <div class="tg-msg-author" onclick="viewUserPortfolio('${msg.sender_id || ''}', '${msgName}')">${msgName}</div>
+                            <div>${msg.text}</div>
+                        </div>
                     </div>
-                </div>
-            `).join('') : '';
+                `;
+            }).join('') : '';
 
             chatSection = `
                 <h3 style="font-size: 12px; text-align: left; margin-top: 18px; color: var(--accent-gold);">${currentLang === 'ru' ? 'Общий чат клана:' : 'Clan Chat:'}</h3>
@@ -1714,6 +1786,13 @@
             actionButton = `<button class="btn btn-gold" onclick="sendJoinRequest('${clan.id}')">${d.btnJoin}</button>`;
         }
 
+        const inviteSection = `
+            <div style="margin-top: 15px; background: rgba(27,28,31,0.8); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; text-align: center;">
+                <p style="font-size: 11px; color: var(--accent-gold); margin-bottom: 6px; font-weight: 600;">${currentLang === 'ru' ? '🔗 ССЫЛКА ДЛЯ ПРИГЛАШЕНИЯ В КЛАН:' : '🔗 CLAN INVITE LINK:'}</p>
+                <button class="btn" style="background: #2f3238; font-size: 11px; margin: 0; padding: 8px;" onclick="copyInviteLink('${clan.id}')">${currentLang === 'ru' ? '📋 Скопировать ссылку для VK/TG' : '📋 Copy Invite Link'}</button>
+            </div>
+        `;
+
         const detailContainer = document.getElementById('clan-detail-content');
         detailContainer.innerHTML = `
             <div class="clan-detail-card">
@@ -1730,7 +1809,9 @@
 
                     ${chatSection}
                     ${actionButton}
-                    <button class="btn" style="margin-top: 8px;" onclick="switchView('feed', document.querySelectorAll('.nav-item')[0], 0)">${currentLang === 'ru' ? 'Вернуться на главную' : 'Back to Main'}</button>
+                    ${inviteSection}
+                    <button class="btn" style="margin-top: 12px;" onclick="switchView('feed', document.querySelectorAll('.nav-item')[0], 0)">${currentLang === 'ru' ? 'Вернуться на главную' : 'Back to Main'}</button>
+                    <div class="creator-watermark" style="margin-top: 15px;">Создатель: @nazaros2009 (SO2fam 2026®)</div>
                 </div>
             </div>
         `;
@@ -1823,7 +1904,7 @@
         }
 
         const requestObj = {
-            id: 'req_' + Date.now(),
+            id: 'req_' + Date.now() + '_' + Math.floor(Math.random()*1000),
             clan_id: clanId,
             clan_name: clan.name,
             owner_id: clan.owner_id,
@@ -1852,6 +1933,7 @@
         if (currentUser.clanId === clanId || currentUser.clan_id === clanId) {
             currentUser.clanId = null;
             currentUser.clan_id = null;
+            localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
         }
 
         hideLoader();
@@ -1869,7 +1951,7 @@
         await sb.from('join_requests').delete().eq('id', reqId);
 
         const notif = {
-            id: Date.now(),
+            id: Date.now() + '_' + Math.floor(Math.random()*1000),
             text: currentLang === 'ru' ? `Заявка игрока ${req.user_name} на вступление в клан ${req.clan_name} была принята.` : `Player ${req.user_name}'s request to join ${req.clan_name} was accepted.`,
             unread: true
         };
@@ -1911,7 +1993,7 @@
                 user_name: currentUser.name,
                 name: name,
                 tag: tag,
-                photo: base64Photo || 'https://via.placeholder.com/700x200/282a2e/f39c12?text=CLAN',
+                photo: base64Photo || 'https://via.placeholder.com/700x200/282a2e/f39c12?text=SO2+CLAN',
                 description: desc
             };
 
@@ -1965,6 +2047,7 @@
         await sb.from('profiles').update({ clan_id: null }).eq('id', currentUser.id);
         currentUser.clanId = null;
         currentUser.clan_id = null;
+        localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
         await fetchAppDataFromSupabase();
         renderProfile();
         showToast(dict[currentLang].toastClanUpd, currentLang === 'ru' ? 'Вы покинули клан.' : 'You left the clan.');
@@ -1975,10 +2058,12 @@
         const d = dict[currentLang];
         
         let requestsHtml = '';
-        const myRequests = (appData.joinRequests || []).filter(r => {
+        const myRequestsRaw = (appData.joinRequests || []).filter(r => {
             const clan = appData.clans.find(c => c.id === r.clan_id);
             return clan && clan.owner_id === currentUser.id;
         });
+
+        const myRequests = Array.from(new Map(myRequestsRaw.map(r => [r.id, r])).values());
 
         if (myRequests.length > 0) {
             requestsHtml = `<h3 style="font-size:12.5px; text-align:left; color:var(--accent-gold); margin-bottom:10px;">${currentLang === 'ru' ? 'Заявки на вступление в ваш клан:' : 'Join requests for your clan:'}</h3>` + 
@@ -2001,7 +2086,8 @@
             `).join('');
         }
 
-        let genNotifs = (appData.notifications || []).map(n => `
+        const uniqueNotifs = Array.from(new Map((appData.notifications || []).map(n => [n.id, n])).values());
+        let genNotifs = uniqueNotifs.map(n => `
             <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 10px;">
                 <p style="margin: 0; color: var(--text-main); text-align: left; font-size: 12.5px;">
                     ${n.text}
@@ -2010,7 +2096,7 @@
             </div>
         `).join('');
 
-        if (myRequests.length === 0 && appData.notifications.length === 0) {
+        if (myRequests.length === 0 && uniqueNotifs.length === 0) {
             container.innerHTML = `<p>${d.notifEmpty}</p>`;
         } else {
             container.innerHTML = requestsHtml + '<br>' + genNotifs;
@@ -2073,7 +2159,7 @@
 
         container.innerHTML = appData.pendingClans.map(req => `
             <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 14px; max-width: 520px; overflow: hidden;">
-                <img src="${req.photo}" style="width:100%; height:110px; object-fit:cover;" alt="Banner">
+                <img src="${req.photo || 'https://via.placeholder.com/700x200/282a2e/f39c12?text=SO2+CLAN'}" style="width:100%; height:110px; object-fit:cover;" alt="Banner">
                 <div style="padding: 14px;">
                     <p style="text-align: left; margin-bottom: 4px; font-size: 12.5px;"><b>${currentLang === 'ru' ? 'Создатель:' : 'Creator:'}</b> ${req.user_name} (ID: ${req.user_id})</p>
                     <p style="text-align: left; margin-bottom: 4px; font-size: 12.5px;"><b>${currentLang === 'ru' ? 'Клан:' : 'Clan:'}</b> ${req.name} | <b>${currentLang === 'ru' ? 'Тег:' : 'Tag:'}</b> ${req.tag}</p>
@@ -2097,7 +2183,7 @@
             id: newClanId,
             name: req.name,
             tag: req.tag,
-            photo: req.photo,
+            photo: req.photo || 'https://via.placeholder.com/700x200/282a2e/f39c12?text=SO2+CLAN',
             description: req.description,
             owner_id: req.user_id
         };
@@ -2107,7 +2193,7 @@
         await sb.from('pending_clans').delete().eq('id', reqId);
 
         const notif = {
-            id: Date.now(),
+            id: Date.now() + '_' + Math.floor(Math.random()*1000),
             text: currentLang === 'ru' ? `Поздравляем! Ваша заявка на клан "${req.name}" одобрена!` : `Congratulations! Your request for clan "${req.name}" has been approved!`,
             unread: true
         };
@@ -2116,6 +2202,7 @@
         if (req.user_id === currentUser.id) {
             currentUser.clanId = newClanId;
             currentUser.clan_id = newClanId;
+            localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
         }
 
         hideLoader();
@@ -2146,7 +2233,7 @@
         if (req) {
             await sb.from('pending_clans').delete().eq('id', currentRejectingClanId);
             const notif = {
-                id: Date.now(),
+                id: Date.now() + '_' + Math.floor(Math.random()*1000),
                 text: currentLang === 'ru' ? `Ваша заявка на клан "${req.name}" отклонена. Причина: ${reason}` : `Your clan request for "${req.name}" was rejected. Reason: ${reason}`,
                 unread: true
             };
