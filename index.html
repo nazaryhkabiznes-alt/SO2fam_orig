@@ -50,7 +50,7 @@
             width: 100vw;
             height: 100vh;
             background-color: #121316;
-            background-image: linear-gradient(rgba(18, 19, 22, 0.5), rgba(18, 19, 22, 0.75)), url('https://cdn-www.bluestacks.com/bs-images/so2-breakout1.jpg');
+            background-image: linear-gradient(rgba(18, 19, 22, 0.5), rgba(18, 19, 22, 0.75)), url('https://vsacaavjrsocaejksacr.supabase.co/storage/v1/object/public/musik/1791648775599.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -489,6 +489,19 @@
             cursor: pointer;
         }
 
+        .profile-banner-container::after {
+            content: attr(data-txt);
+            position: absolute;
+            bottom: 6px;
+            right: 10px;
+            background: rgba(0,0,0,0.6);
+            color: var(--accent-gold);
+            font-size: 8.5px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
         .profile-avatar-circle {
             width: 80px;
             height: 80px;
@@ -676,8 +689,8 @@
     <div id="bg-layer"></div>
     <canvas id="snow-canvas"></canvas>
     
-    <!-- Фоновый аудиоэлемент (Interworld - Metamorphosis) -->
-    <audio id="bg-audio" loop preload="auto" crossorigin="anonymous" src="https://vsacaavjrsocaejksacr.supabase.co/storage/v1/object/public/musik/Interworld%20-%20Metamorphosis%20(hitmos.fm).mp3"></audio>
+    <!-- Фоновый аудиоэлемент -->
+    <audio id="bg-audio" loop preload="auto" crossorigin="anonymous" src="https://vsacaavjrsocaejksacr.supabase.co/storage/v1/object/public/musik/SVID_20261011_163849_1.mp3"></audio>
 
     <div class="creator-watermark">@nazaros2009 (SO2fam 2026®)</div>
 
@@ -762,7 +775,7 @@
                         </button>
                     </div>
                     <div class="profile-card">
-                        <div class="profile-banner-container" id="profile-banner-box" onclick="triggerAvatarUpload()">
+                        <div class="profile-banner-container" id="profile-banner-box" data-txt="Изменить фото" onclick="triggerAvatarUpload()">
                             <img id="profile-avatar-preview" src="https://via.placeholder.com/150/25282e/f39c12?text=SO2" class="profile-avatar-circle" alt="Profile Avatar" onclick="event.stopPropagation(); openMyPortfolio()">
                         </div>
                         <input type="file" id="hidden-avatar-input" accept="image/*" style="display:none;" onchange="handleAvatarFileSelect(this)">
@@ -918,24 +931,34 @@
 </div>
 
 <script>
-    // --- Автозапуск фоновой музыки ---
-    let audioStarted = false;
+    // --- Премиальные киберспортивные аватарки по умолчанию ---
+    const defaultAvatarsPool = [
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=SO2ProGamer1&backgroundColor=f39c12',
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=StandoffLegend2&backgroundColor=e74c3c',
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=CyberSniper3&backgroundColor=3498db',
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=TacticalMaster4&backgroundColor=2ecc71',
+        'https://api.dicebear.com/7.x/avataaars/svg?seed=ViperSO25&backgroundColor=9b59b6'
+    ];
 
-    function tryPlayAudio() {
+    // --- Автозапуск фоновой музыки сразу при загрузке ---
+    function initAndPlayAudio() {
         const audio = document.getElementById('bg-audio');
-        if (audio && !audioStarted) {
+        if (audio) {
             audio.volume = 0.25;
-            audio.play().then(() => {
-                audioStarted = true;
-            }).catch(e => {
-                console.log("Audio waiting for user gesture:", e);
+            audio.play().catch(e => {
+                // Если браузер заблокировал автовоспроизведение до первого клика, запускаем по первому касанию/клику
+                const unlockAudio = () => {
+                    audio.play().catch(err => {});
+                    window.removeEventListener('click', unlockAudio);
+                    window.removeEventListener('touchstart', unlockAudio);
+                    window.removeEventListener('keydown', unlockAudio);
+                };
+                window.addEventListener('click', unlockAudio);
+                window.addEventListener('touchstart', unlockAudio);
+                window.addEventListener('keydown', unlockAudio);
             });
         }
     }
-
-    window.addEventListener('click', tryPlayAudio, { once: false });
-    window.addEventListener('touchstart', tryPlayAudio, { once: false });
-    window.addEventListener('keydown', tryPlayAudio, { once: false });
 
     document.addEventListener('visibilitychange', function() {
         const audio = document.getElementById('bg-audio');
@@ -1308,8 +1331,6 @@
         document.getElementById('reject-reason-input').placeholder = d.rejPH;
         document.getElementById('t-rej-btn').innerText = d.rejBtn;
         document.getElementById('t-rej-cancel').innerText = d.rejCancel;
-
-        document.getElementById('profile-banner-box').setAttribute('data-txt', d.bannerHover);
     }
 
     function playSoftChime() {
@@ -1468,12 +1489,14 @@
                 appData.pendingClans = pendingData || [];
                 appData.notifications = notifsData || [];
                 
-                // Синхронизируем актуальный clan_id для текущего пользователя из базы данных (гарантирует доступ к чату после принятия)
                 if (currentUser.id) {
                     const myProf = (membersData || []).find(m => m.id === currentUser.id);
                     if (myProf) {
                         currentUser.clanId = myProf.clan_id;
                         currentUser.clan_id = myProf.clan_id;
+                        currentUser.name = myProf.name || currentUser.name;
+                        currentUser.avatar = myProf.avatar || currentUser.avatar;
+                        currentUser.bio = myProf.bio || currentUser.bio;
                         localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
                     }
                 }
@@ -1505,7 +1528,7 @@
         });
         if (myRequests.length > 0) hasUnread = true;
 
-        const unreadNotifs = (appData.notifications || []).filter(n => n.unread);
+        const unreadNotifs = (appData.notifications || []).filter(n => n.user_id === currentUser.id && n.unread);
         if (unreadNotifs.length > 0) hasUnread = true;
 
         if (hasUnread) {
@@ -1516,6 +1539,7 @@
     }
 
     window.onload = async function() {
+        initAndPlayAudio(); // Запуск музыки при загрузке страницы
         showLoader(currentLang === 'ru' ? 'ЗАГРУЗКА...' : 'LOADING...');
         await fetchAppDataFromSupabase();
         hideLoader();
@@ -1559,6 +1583,7 @@
     };
 
     function setLanguage(lang) {
+        initAndPlayAudio();
         currentLang = lang;
         currentUser.bio = currentLang === 'ru' ? 'Привет! Я играю в Standoff 2 и ищу сильный клан.' : 'Hi! I play Standoff 2 and look for a strong clan.';
         updateLanguageUI();
@@ -1567,6 +1592,7 @@
     }
 
     async function registerUser() {
+        initAndPlayAudio();
         const idInput = document.getElementById('auth-id').value.trim();
         const nameInput = document.getElementById('auth-name').value.trim();
 
@@ -1588,8 +1614,7 @@
 
         showLoader(currentLang === 'ru' ? 'АВТОРИЗАЦИЯ...' : 'SIGNING IN...');
 
-        const randomSeed = Math.random().toString(36).substring(2, 9);
-        const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}&backgroundColor=f39c12`;
+        const randomDefaultAvatar = defaultAvatarsPool[Math.floor(Math.random() * defaultAvatarsPool.length)];
 
         try {
             let existingProfile = null;
@@ -1602,8 +1627,8 @@
                 const newProf = {
                     id: idInput,
                     name: nameInput,
-                    avatar: defaultAvatar,
-                    bio: currentUser.bio,
+                    avatar: randomDefaultAvatar,
+                    bio: currentLang === 'ru' ? 'Привет! Я играю в Standoff 2 и ищу сильный клан.' : 'Hi! I play Standoff 2 and look for a strong clan.',
                     clan_id: null
                 };
                 try {
@@ -1614,7 +1639,7 @@
                 currentUser = {
                     id: existingProfile.id,
                     name: existingProfile.name,
-                    avatar: existingProfile.avatar || defaultAvatar,
+                    avatar: existingProfile.avatar || randomDefaultAvatar,
                     bio: existingProfile.bio,
                     clanId: existingProfile.clan_id
                 };
@@ -1633,6 +1658,7 @@
     }
 
     function goToHubChoice() {
+        initAndPlayAudio();
         document.getElementById('screen-welcome-info').classList.add('hidden');
         document.getElementById('screen-hub-choice').classList.remove('hidden');
         document.getElementById('privacy-push').classList.remove('hidden');
@@ -1644,6 +1670,7 @@
     }
 
     async function openMainApp() {
+        initAndPlayAudio();
         showLoader();
         await fetchAppDataFromSupabase();
         hideLoader();
@@ -1692,9 +1719,9 @@
     async function markNotificationsAsRead() {
         try {
             await sb.from('join_requests').update({ unread: false }).eq('owner_id', currentUser.id);
-            await sb.from('notifications').update({ unread: false }).eq('unread', true);
+            await sb.from('notifications').update({ unread: false }).eq('user_id', currentUser.id).eq('unread', true);
             appData.joinRequests.forEach(r => { if (r.owner_id === currentUser.id) r.unread = false; });
-            appData.notifications.forEach(n => n.unread = false);
+            appData.notifications.forEach(n => { if (n.user_id === currentUser.id) n.unread = false; });
             checkUnreadStatus();
         } catch(e) {}
     }
@@ -2042,7 +2069,7 @@
     }
 
     async function sendClanMessage(clanId) {
-        if (isSendingChatLock) return; // Антифлуд антиспам
+        if (isSendingChatLock) return;
 
         const input = document.getElementById('clan-chat-input');
         if (!input) return;
@@ -2222,7 +2249,8 @@
 
             const notif = {
                 id: Date.now() + '_' + Math.floor(Math.random()*1000),
-                text: currentLang === 'ru' ? `Заявка игрока ${req.user_name} на вступление в клан ${req.clan_name} была принята.` : `Player ${req.user_name}'s request to join ${req.clan_name} was accepted.`,
+                user_id: req.user_id,
+                text: currentLang === 'ru' ? `Поздравляем! Ваша заявка на вступление в клан ${req.clan_name} была принята.` : `Congratulations! Your request to join ${req.clan_name} was accepted.`,
                 unread: true
             };
             await sb.from('notifications').insert([notif]);
@@ -2234,7 +2262,17 @@
     }
 
     async function rejectJoinRequest(reqId) {
+        const req = appData.joinRequests.find(r => r.id === reqId);
         try {
+            if (req) {
+                const notif = {
+                    id: Date.now() + '_' + Math.floor(Math.random()*1000),
+                    user_id: req.user_id,
+                    text: currentLang === 'ru' ? `Ваша заявка на вступление в клан ${req.clan_name} была отклонена.` : `Your request to join ${req.clan_name} was rejected.`,
+                    unread: true
+                };
+                await sb.from('notifications').insert([notif]);
+            }
             await sb.from('join_requests').delete().eq('id', reqId);
         } catch(e) {}
         await fetchAppDataFromSupabase();
@@ -2393,7 +2431,9 @@
             `).join('');
         }
 
-        const uniqueNotifs = Array.from(new Map((appData.notifications || []).map(n => [n.id, n])).values());
+        const userNotifs = (appData.notifications || []).filter(n => n.user_id === currentUser.id);
+        const uniqueNotifs = Array.from(new Map(userNotifs.map(n => [n.id, n])).values());
+        
         let genNotifs = uniqueNotifs.map(n => `
             <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 9px; border-radius: 7px; margin-bottom: 7px;">
                 <p style="margin: 0; color: var(--text-main); text-align: left; font-size: 11px;">
@@ -2503,6 +2543,7 @@
 
             const notif = {
                 id: Date.now() + '_' + Math.floor(Math.random()*1000),
+                user_id: req.user_id,
                 text: currentLang === 'ru' ? `Поздравляем! Ваша заявка на клан "${req.name}" одобрена!` : `Congratulations! Your request for clan "${req.name}" has been approved!`,
                 unread: true
             };
@@ -2547,6 +2588,7 @@
                 const notifText = currentLang === 'ru' ? `Ваша заявка на клан "${req.name}" отклонена. Причина: ${reason}` : `Your clan request for "${req.name}" was rejected. Reason: ${reason}`;
                 const notif = {
                     id: Date.now() + '_' + Math.floor(Math.random()*1000),
+                    user_id: req.user_id,
                     text: notifText,
                     unread: true
                 };
