@@ -689,7 +689,7 @@
     <div id="bg-layer"></div>
     <canvas id="snow-canvas"></canvas>
     
-    <!-- Фоновый аудиоэлемент -->
+    <!-- Фоновый аудиоэлемент (Interworld - Metamorphosis) -->
     <audio id="bg-audio" loop preload="auto" crossorigin="anonymous" src="https://vsacaavjrsocaejksacr.supabase.co/storage/v1/object/public/musik/SVID_20261011_163849_1.mp3"></audio>
 
     <div class="creator-watermark">@nazaros2009 (SO2fam 2026®)</div>
@@ -940,25 +940,24 @@
         'https://api.dicebear.com/7.x/avataaars/svg?seed=ViperSO25&backgroundColor=9b59b6'
     ];
 
-    // --- Автозапуск фоновой музыки сразу при загрузке ---
-    function initAndPlayAudio() {
+    // --- Автозапуск фоновой музыки ---
+    let audioStarted = false;
+
+    function tryPlayAudio() {
         const audio = document.getElementById('bg-audio');
-        if (audio) {
+        if (audio && !audioStarted) {
             audio.volume = 0.25;
-            audio.play().catch(e => {
-                // Если браузер заблокировал автовоспроизведение до первого клика, запускаем по первому касанию/клику
-                const unlockAudio = () => {
-                    audio.play().catch(err => {});
-                    window.removeEventListener('click', unlockAudio);
-                    window.removeEventListener('touchstart', unlockAudio);
-                    window.removeEventListener('keydown', unlockAudio);
-                };
-                window.addEventListener('click', unlockAudio);
-                window.addEventListener('touchstart', unlockAudio);
-                window.addEventListener('keydown', unlockAudio);
+            audio.play().then(() => {
+                audioStarted = true;
+            }).catch(e => {
+                console.log("Audio waiting for user gesture:", e);
             });
         }
     }
+
+    window.addEventListener('click', tryPlayAudio, { once: false });
+    window.addEventListener('touchstart', tryPlayAudio, { once: false });
+    window.addEventListener('keydown', tryPlayAudio, { once: false });
 
     document.addEventListener('visibilitychange', function() {
         const audio = document.getElementById('bg-audio');
@@ -1528,6 +1527,7 @@
         });
         if (myRequests.length > 0) hasUnread = true;
 
+        // Фильтрация уведомлений строго по текущему пользователю
         const unreadNotifs = (appData.notifications || []).filter(n => n.user_id === currentUser.id && n.unread);
         if (unreadNotifs.length > 0) hasUnread = true;
 
@@ -1539,7 +1539,6 @@
     }
 
     window.onload = async function() {
-        initAndPlayAudio(); // Запуск музыки при загрузке страницы
         showLoader(currentLang === 'ru' ? 'ЗАГРУЗКА...' : 'LOADING...');
         await fetchAppDataFromSupabase();
         hideLoader();
@@ -1583,7 +1582,6 @@
     };
 
     function setLanguage(lang) {
-        initAndPlayAudio();
         currentLang = lang;
         currentUser.bio = currentLang === 'ru' ? 'Привет! Я играю в Standoff 2 и ищу сильный клан.' : 'Hi! I play Standoff 2 and look for a strong clan.';
         updateLanguageUI();
@@ -1592,7 +1590,6 @@
     }
 
     async function registerUser() {
-        initAndPlayAudio();
         const idInput = document.getElementById('auth-id').value.trim();
         const nameInput = document.getElementById('auth-name').value.trim();
 
@@ -1614,6 +1611,7 @@
 
         showLoader(currentLang === 'ru' ? 'АВТОРИЗАЦИЯ...' : 'SIGNING IN...');
 
+        // Выбираем красивую случайную премиум-аватарку из пула
         const randomDefaultAvatar = defaultAvatarsPool[Math.floor(Math.random() * defaultAvatarsPool.length)];
 
         try {
@@ -1658,7 +1656,6 @@
     }
 
     function goToHubChoice() {
-        initAndPlayAudio();
         document.getElementById('screen-welcome-info').classList.add('hidden');
         document.getElementById('screen-hub-choice').classList.remove('hidden');
         document.getElementById('privacy-push').classList.remove('hidden');
@@ -1670,7 +1667,6 @@
     }
 
     async function openMainApp() {
-        initAndPlayAudio();
         showLoader();
         await fetchAppDataFromSupabase();
         hideLoader();
@@ -2249,7 +2245,7 @@
 
             const notif = {
                 id: Date.now() + '_' + Math.floor(Math.random()*1000),
-                user_id: req.user_id,
+                user_id: req.user_id, // Личное уведомление строго для этого игрока!
                 text: currentLang === 'ru' ? `Поздравляем! Ваша заявка на вступление в клан ${req.clan_name} была принята.` : `Congratulations! Your request to join ${req.clan_name} was accepted.`,
                 unread: true
             };
@@ -2431,6 +2427,7 @@
             `).join('');
         }
 
+        // Фильтруем уведомления строго по текущему пользователю
         const userNotifs = (appData.notifications || []).filter(n => n.user_id === currentUser.id);
         const uniqueNotifs = Array.from(new Map(userNotifs.map(n => [n.id, n])).values());
         
