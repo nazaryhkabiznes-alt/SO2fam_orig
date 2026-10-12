@@ -533,6 +533,7 @@
             padding: 46px 16px 16px 16px;
         }
 
+        /* Кнопки в правом нижнем углу */
         .global-logout-bottom-btn {
             position: fixed;
             bottom: 64px;
@@ -567,6 +568,43 @@
         }
 
         .global-logout-bottom-btn:hover svg {
+            fill: #fff;
+        }
+
+        .global-support-bottom-btn {
+            position: fixed;
+            bottom: 64px;
+            right: 64px;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #2c2f36, #1a1c20);
+            border: 1.5px solid var(--accent-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(243, 156, 18, 0.4);
+            z-index: 998;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .global-support-bottom-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, #f39c12, #d35400);
+            border-color: #fff;
+            box-shadow: 0 0 20px var(--accent-gold);
+        }
+
+        .global-support-bottom-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent-gold);
+            transition: fill 0.2s;
+        }
+
+        .global-support-bottom-btn:hover svg {
             fill: #fff;
         }
 
@@ -634,7 +672,6 @@
             object-fit: cover;
         }
 
-        /* Увеличенные и стильные CSS индикаторы в сети / не в сети */
         .status-indicator {
             width: 10px;
             height: 10px;
@@ -759,21 +796,32 @@
             fill: #fff;
         }
 
+        /* Увеличенное и плавное всплывающее окно конфиденциальности */
         #privacy-push {
             position: fixed;
-            bottom: 14px;
-            left: 14px;
-            right: 14px;
-            max-width: 300px;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            max-width: 360px;
             background: var(--bg-panel);
             border: 1px solid var(--accent-gold);
-            border-radius: 9px;
-            padding: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.85);
             z-index: 9999;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
+            transform: translateY(30px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+            pointer-events: none;
         }
-        #privacy-push.hidden { display: none !important; opacity: 0; pointer-events: none; }
+
+        #privacy-push:not(.hidden) {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            display: block !important;
+        }
 
         #toast-container {
             position: fixed;
@@ -951,14 +999,32 @@
                         <h2 id="t-admin-title">Панель администратора SO2fam</h2>
                         <button class="btn btn-danger" style="width: auto; padding: 5px 9px; margin:0; font-size: 9.5px;" onclick="exitAdminReserveAccount()">Выйти</button>
                     </div>
-                    <p id="t-admin-subtitle" style="text-align: left; margin-bottom: 8px;">Входящие заявки на создание кланов:</p>
-                    <div id="admin-requests-list">
-                        <p id="t-admin-empty" style="text-align: left;">Нет активных заявок</p>
+                    <div style="display: flex; gap: 6px; margin-bottom: 12px;">
+                        <button class="btn btn-gold" id="admin-tab-clans-btn" onclick="switchAdminTab('clans')">Клановые заявки</button>
+                        <button class="btn" id="admin-tab-tickets-btn" onclick="switchAdminTab('tickets')">Поддержка SO2fam</button>
+                    </div>
+                    <div id="admin-section-clans">
+                        <p id="t-admin-subtitle" style="text-align: left; margin-bottom: 8px;">Входящие заявки на создание кланов:</p>
+                        <div id="admin-requests-list">
+                            <p id="t-admin-empty" style="text-align: left;">Нет активных заявок</p>
+                        </div>
+                    </div>
+                    <div id="admin-section-tickets" style="display: none;">
+                        <p style="text-align: left; margin-bottom: 8px;">Чаты поддержки с игроками:</p>
+                        <div id="admin-tickets-list">
+                            <p style="text-align: left;">Нет активных чатов</p>
+                        </div>
                     </div>
                 </div>
 
             </div>
 
+            <!-- Кнопка чата поддержки (слева от кнопки выхода) -->
+            <button class="global-support-bottom-btn" onclick="openSupportModal()" title="Поддержка SO2fam">
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+            </button>
+
+            <!-- Кнопка выхода -->
             <button class="global-logout-bottom-btn" onclick="logoutAccount()" title="Выйти из аккаунта">
                 <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
             </button>
@@ -982,10 +1048,45 @@
         </div>
     </div>
 
+    <!-- Увеличенный и плавный блок конфиденциальности -->
     <div id="privacy-push" class="hidden">
-        <h4 id="t-priv-title" style="color: var(--accent-gold); font-size: 11.5px; margin-bottom: 3px; text-align: left;">Конфиденциальность</h4>
-        <p id="t-priv-text" style="text-align: left; font-size: 10.5px; color: var(--text-muted); margin-bottom: 8px;">Используя платформу SO2fam, вы соглашаетесь с правилами безопасности.</p>
-        <button class="btn btn-gold" style="padding: 5px 9px; font-size: 10px; margin: 0; width: auto;" onclick="closePrivacyPush()">ОК</button>
+        <h4 id="t-priv-title" style="color: var(--accent-gold); font-size: 12.5px; margin-bottom: 5px; text-align: left;">Конфиденциальность</h4>
+        <p id="t-priv-text" style="text-align: left; font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">Используя платформу SO2fam, вы соглашаетесь с правилами безопасности и конфиденциальности сообщества.</p>
+        <button class="btn btn-gold" style="padding: 6px 14px; font-size: 10.5px; margin: 0; width: auto;" onclick="closePrivacyPush()">ОК</button>
+    </div>
+
+    <!-- Модальное окно чата Поддержка SO2fam (для пользователя) -->
+    <div id="support-modal" class="modal-overlay hidden">
+        <div class="modal-box" style="max-width: 380px;">
+            <h3>Поддержка SO2fam</h3>
+            <p style="font-size: 10.5px; margin-bottom: 10px;">Задайте вопрос или напишите обращение администрации.</p>
+            <div id="support-chat-messages" style="background: rgba(20,21,24,0.85); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; height: 220px; overflow-y: auto; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;"></div>
+            <div style="display: flex; gap: 6px;">
+                <input type="text" id="support-user-input" placeholder="Введите сообщение..." style="margin:0;" onkeypress="handleSupportKeyPress(event)">
+                <button class="btn btn-gold" style="width: auto; margin:0; padding: 0 14px;" onclick="sendSupportMessage()">Отправить</button>
+            </div>
+            <button class="btn" style="margin-top: 8px;" onclick="closeSupportModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно чата администратора с конкретным пользователем -->
+    <div id="admin-chat-modal" class="modal-overlay hidden">
+        <div class="modal-box" style="max-width: 420px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h3 id="admin-chat-title" style="margin:0;">Чат с игроком</h3>
+                <span id="admin-chat-status" style="font-size: 9.5px; font-weight: bold;"></span>
+            </div>
+            <div id="admin-chat-messages" style="background: rgba(20,21,24,0.85); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; height: 240px; overflow-y: auto; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;"></div>
+            <div id="admin-chat-controls" style="display: flex; gap: 6px; margin-bottom: 8px;">
+                <input type="text" id="admin-chat-input" placeholder="Ответ администратора..." style="margin:0;" onkeypress="handleAdminChatKeyPress(event)">
+                <button class="btn btn-gold" style="width: auto; margin:0; padding: 0 14px;" onclick="sendAdminSupportMessage()">Отправить</button>
+            </div>
+            <div style="display: flex; gap: 6px;">
+                <button class="btn btn-danger" id="admin-close-ticket-btn" onclick="toggleCloseSupportChat()">Закрыть диалог</button>
+                <button class="btn btn-danger" style="background:#8b0000;" onclick="deleteSupportChat()">Удалить чат</button>
+                <button class="btn" onclick="closeAdminChatModal()">Назад</button>
+            </div>
+        </div>
     </div>
 
     <div id="user-portfolio-modal" class="modal-overlay hidden">
@@ -1636,12 +1737,14 @@
     let heartbeatInterval = null;
     let isSendingChatLock = false;
     let lastKnownChatCount = {};
+    let activeSupportUserIdForAdmin = null;
 
     let appData = {
         clans: [],
         pendingClans: [],
         notifications: [],
-        joinRequests: []
+        joinRequests: [],
+        supportMessages: []
     };
 
     const defaultSampleClans = [
@@ -1679,6 +1782,7 @@
             const { data: reqsData } = await sb.from('join_requests').select('*');
             const { data: pendingData } = await sb.from('pending_clans').select('*');
             const { data: notifsData } = await sb.from('notifications').select('*');
+            const { data: supportData } = await sb.from('support_messages').select('*');
 
             let loadedClans = (clansData || []).map(c => {
                 const clanChatList = (chatData || []).filter(ch => ch.clan_id === c.id);
@@ -1714,6 +1818,7 @@
             appData.joinRequests = reqsData || [];
             appData.pendingClans = pendingData || [];
             appData.notifications = notifsData || [];
+            appData.supportMessages = supportData || [];
             
             if (currentUser.id) {
                 const myProf = (membersData || []).find(m => m.id === currentUser.id);
@@ -1730,10 +1835,19 @@
             
             checkUnreadStatus();
 
-            if (isBackgroundSync && activeChatClanId) {
-                const clan = appData.clans.find(c => c.id === activeChatClanId);
-                if (clan) {
-                    updateChatMessagesContainer(clan);
+            if (isBackgroundSync) {
+                if (activeChatClanId) {
+                    const clan = appData.clans.find(c => c.id === activeChatClanId);
+                    if (clan) updateChatMessagesContainer(clan);
+                }
+                if (!document.getElementById('support-modal').classList.contains('hidden')) {
+                    renderSupportUserChat();
+                }
+                if (isAdminReserveActive && activeSupportUserIdForAdmin) {
+                    renderAdminChatMessages(activeSupportUserIdForAdmin);
+                }
+                if (isAdminReserveActive) {
+                    renderAdminSupportChatsList();
                 }
             }
         } catch (err) {
@@ -1750,7 +1864,7 @@
             if (currentUser.id) {
                 fetchAppDataFromSupabase(true);
             }
-        }, 3000);
+        }, 2500);
     }
 
     async function checkUnreadStatus() {
@@ -1854,6 +1968,28 @@
 
     window.onload = async function() {
         initAndPlayAudio();
+
+        let savedAdminActive = localStorage.getItem('so2fam_admin_active');
+        if (savedAdminActive === 'true') {
+            isAdminReserveActive = true;
+            regularUserSession = JSON.parse(localStorage.getItem('so2fam_regular_user') || 'null');
+            currentUser = {
+                id: '200009009',
+                name: 'Administrator [Reserve]',
+                avatar: 'https://via.placeholder.com/150/f39c12/121316?text=ADMIN',
+                clanId: '1'
+            };
+            showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ВОССТАНОВЛЕНИЕ СЕССИИ АДМИНИСТРАТОРА...', async () => {
+                await fetchAppDataFromSupabase();
+                document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+                document.getElementById('screen-main').classList.remove('hidden');
+                switchView('admin-panel');
+                renderAdminRequests();
+                renderAdminSupportChatsList();
+                startGlobalSync();
+            });
+            return;
+        }
 
         let savedUserJson = localStorage.getItem('so2fam_current_user');
         if (!savedUserJson) {
@@ -1992,6 +2128,8 @@
             saveCurrentAccountToSavedList(currentUser);
             localStorage.removeItem('so2fam_current_user');
             sessionStorage.removeItem('so2fam_current_user');
+            localStorage.removeItem('so2fam_admin_active');
+            localStorage.removeItem('so2fam_regular_user');
             
             currentUser = { id: '', name: '', avatar: '', clanId: null, bio: '', password: '' };
             stopChatPolling();
@@ -2167,7 +2305,6 @@
         const statusEl = document.getElementById('portfolio-status');
         const online = isMe || isUserOnline(lastSeen);
         
-        // Обновленный стильный CSS статус в модальном окне
         if (online) {
             statusEl.innerHTML = `<span style="display:inline-flex; align-items:center; justify-content:center; gap:6px; color:var(--success);"><span class="status-indicator online" style="margin:0;"></span> ${currentLang === 'ru' ? 'В сети (Online)' : 'Online'}</span>`;
         } else {
@@ -2851,6 +2988,294 @@
         }
     }
 
+    // ПОЛНОЦЕННЫЙ ЧАТ ПОДДЕРЖКИ (ПОЛЬЗОВАТЕЛЬ)
+    function openSupportModal() {
+        if (isAdminReserveActive) {
+            showSiteAlert('Администратор использует панель управления для ответов.');
+            return;
+        }
+        renderSupportUserChat();
+        document.getElementById('support-modal').classList.remove('hidden');
+    }
+
+    function closeSupportModal() {
+        document.getElementById('support-modal').classList.add('hidden');
+    }
+
+    function renderSupportUserChat() {
+        const box = document.getElementById('support-chat-messages');
+        if (!box) return;
+
+        const userMsgs = (appData.supportMessages || []).filter(m => m.user_id === currentUser.id);
+
+        if (userMsgs.length === 0) {
+            box.innerHTML = `<p style="color:var(--text-muted); font-size:11px; text-align:center; margin-top:80px;">Напишите ваш вопрос или обращение в поддержку SO2fam.</p>`;
+            return;
+        }
+
+        box.innerHTML = userMsgs.map(m => {
+            const isAdmin = m.sender_role === 'admin';
+            const bubbleBg = isAdmin ? 'rgba(243, 156, 18, 0.15)' : 'rgba(37, 40, 46, 0.9)';
+            const authorColor = isAdmin ? 'var(--accent-gold)' : 'var(--text-muted)';
+            const authorName = isAdmin ? 'Поддержка SO2fam [Админ]' : m.user_name;
+
+            let timeStr = '';
+            if (m.created_at) {
+                const dateObj = new Date(m.created_at);
+                timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            return `
+                <div style="display:flex; flex-direction:column; align-items:${isAdmin ? 'flex-start' : 'flex-end'}; margin-bottom:6px;">
+                    <span style="font-size:9px; color:${authorColor}; margin-bottom:2px; font-weight:600;">${authorName} (${timeStr})</span>
+                    <div style="background:${bubbleBg}; border:1px solid var(--border-color); padding:8px 10px; border-radius:10px; max-width:85%; word-break:break-word; font-size:11.5px;">${m.text}</div>
+                </div>
+            `;
+        }).join('');
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function handleSupportKeyPress(e) {
+        if (e.key === 'Enter') sendSupportMessage();
+    }
+
+    async function sendSupportMessage() {
+        const input = document.getElementById('support-user-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        if (containsProfanity(text)) {
+            showSiteAlert('Сообщение содержит запрещенные слова!');
+            return;
+        }
+
+        const msgObj = {
+            id: 'sup_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+            user_id: currentUser.id,
+            sender_role: 'user',
+            user_name: currentUser.name,
+            user_avatar: currentUser.avatar,
+            text: text,
+            status: 'open',
+            created_at: new Date().toISOString()
+        };
+
+        input.value = '';
+        try {
+            await sb.from('support_messages').insert([msgObj]);
+            await fetchAppDataFromSupabase();
+            renderSupportUserChat();
+        } catch(e) {
+            showSiteAlert('Ошибка отправки: ' + e.message);
+        }
+    }
+
+    // ПАНЕЛЬ ПОДДЕРЖКИ ДЛЯ АДМИНИСТРАТОРА
+    function switchAdminTab(tab) {
+        const clansSec = document.getElementById('admin-section-clans');
+        const ticketsSec = document.getElementById('admin-section-tickets');
+        const clansBtn = document.getElementById('admin-tab-clans-btn');
+        const ticketsBtn = document.getElementById('admin-tab-tickets-btn');
+
+        if (tab === 'clans') {
+            clansSec.style.display = 'block';
+            ticketsSec.style.display = 'none';
+            clansBtn.className = 'btn btn-gold';
+            ticketsBtn.className = 'btn';
+        } else {
+            clansSec.style.display = 'none';
+            ticketsSec.style.display = 'block';
+            clansBtn.className = 'btn';
+            ticketsBtn.className = 'btn btn-gold';
+            renderAdminSupportChatsList();
+        }
+    }
+
+    function renderAdminSupportChatsList() {
+        const container = document.getElementById('admin-tickets-list');
+        const allMsgs = appData.supportMessages || [];
+
+        // Группируем сообщения по user_id
+        const chatsMap = {};
+        allMsgs.forEach(m => {
+            if (!chatsMap[m.user_id]) {
+                chatsMap[m.user_id] = {
+                    user_id: m.user_id,
+                    user_name: m.user_name || 'Player',
+                    user_avatar: m.user_avatar,
+                    status: m.status || 'open',
+                    messages: []
+                };
+            }
+            chatsMap[m.user_id].messages.push(m);
+            // Если хоть одно сообщение открыто, статус чата открыт
+            if (m.status === 'open') {
+                chatsMap[m.user_id].status = 'open';
+            }
+        });
+
+        const chatList = Object.values(chatsMap);
+
+        if (chatList.length === 0) {
+            container.innerHTML = `<p style="text-align: left;">Нет чатов поддержки с игроками.</p>`;
+            return;
+        }
+
+        container.innerHTML = chatList.map(chat => {
+            const lastMsg = chat.messages[chat.messages.length - 1];
+            const isOpen = chat.status === 'open';
+
+            return `
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; padding: 12px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:10px; overflow:hidden; cursor:pointer;" onclick="openAdminChatModal('${chat.user_id}')">
+                        <img src="${chat.user_avatar || 'https://via.placeholder.com/40'}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0;">
+                        <div style="text-align:left; overflow:hidden;">
+                            <p style="margin:0; font-size:11.5px; color:var(--text-main); font-weight:bold;">${chat.user_name} <span style="font-weight:normal; color:var(--accent-gold);">(ID: ${chat.user_id})</span></p>
+                            <p style="margin:0; font-size:10.5px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;">${lastMsg ? lastMsg.text : ''}</p>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:6px; flex-shrink:0; align-items:center;">
+                        <span style="font-size:9.5px; color:${isOpen ? 'var(--success)' : 'var(--danger)'}; font-weight:bold;">[${isOpen ? 'Открыт' : 'Закрыт'}]</span>
+                        <button class="btn btn-gold" style="width: auto; margin:0; padding: 6px 10px; font-size:9.5px;" onclick="openAdminChatModal('${chat.user_id}')">Открыть чат</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function openAdminChatModal(userId) {
+        activeSupportUserIdForAdmin = userId;
+        renderAdminChatMessages(userId);
+        document.getElementById('admin-chat-modal').classList.remove('hidden');
+    }
+
+    function closeAdminChatModal() {
+        activeSupportUserIdForAdmin = null;
+        document.getElementById('admin-chat-modal').classList.add('hidden');
+    }
+
+    function renderAdminChatMessages(userId) {
+        const box = document.getElementById('admin-chat-messages');
+        const title = document.getElementById('admin-chat-title');
+        const statusSpan = document.getElementById('admin-chat-status');
+        const closeBtn = document.getElementById('admin-close-ticket-btn');
+        if (!box) return;
+
+        const userMsgs = (appData.supportMessages || []).filter(m => m.user_id === userId);
+        if (userMsgs.length === 0) return;
+
+        const first = userMsgs[0];
+        title.innerText = `Чат с игроком: ${first.user_name || userId}`;
+        
+        const isAnyOpen = userMsgs.some(m => m.status === 'open');
+        if (isAnyOpen) {
+            statusSpan.innerText = '[Статус: Открыт]';
+            statusSpan.style.color = 'var(--success)';
+            closeBtn.innerText = 'Закрыть диалог';
+        } else {
+            statusSpan.innerText = '[Статус: Закрыт]';
+            statusSpan.style.color = 'var(--danger)';
+            closeBtn.innerText = 'Открыть диалог';
+        }
+
+        box.innerHTML = userMsgs.map(m => {
+            const isAdmin = m.sender_role === 'admin';
+            const bubbleBg = isAdmin ? 'rgba(243, 156, 18, 0.15)' : 'rgba(37, 40, 46, 0.9)';
+            const authorColor = isAdmin ? 'var(--accent-gold)' : 'var(--text-muted)';
+            const authorName = isAdmin ? 'Администратор' : m.user_name;
+
+            let timeStr = '';
+            if (m.created_at) {
+                const dateObj = new Date(m.created_at);
+                timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            return `
+                <div style="display:flex; flex-direction:column; align-items:${isAdmin ? 'end' : 'start'}; margin-bottom:6px;">
+                    <span style="font-size:9px; color:${authorColor}; margin-bottom:2px; font-weight:600;">${authorName} (${timeStr})</span>
+                    <div style="background:${bubbleBg}; border:1px solid var(--border-color); padding:8px 10px; border-radius:10px; max-width:85%; word-break:break-word; font-size:11.5px;">${m.text}</div>
+                </div>
+            `;
+        }).join('');
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function handleAdminChatKeyPress(e) {
+        if (e.key === 'Enter') sendAdminSupportMessage();
+    }
+
+    async function sendAdminSupportMessage() {
+        const input = document.getElementById('admin-chat-input');
+        const text = input.value.trim();
+        if (!text || !activeSupportUserIdForAdmin) return;
+
+        if (containsProfanity(text)) {
+            showSiteAlert('Сообщение содержит запрещенные слова!');
+            return;
+        }
+
+        const msgObj = {
+            id: 'sup_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+            user_id: activeSupportUserIdForAdmin,
+            sender_role: 'admin',
+            user_name: 'Admin',
+            user_avatar: currentUser.avatar,
+            text: text,
+            status: 'open',
+            created_at: new Date().toISOString()
+        };
+
+        input.value = '';
+        try {
+            await sb.from('support_messages').insert([msgObj]);
+            await fetchAppDataFromSupabase();
+            renderAdminChatMessages(activeSupportUserIdForAdmin);
+            renderAdminSupportChatsList();
+        } catch(e) {
+            showSiteAlert('Ошибка: ' + e.message);
+        }
+    }
+
+    async function toggleCloseSupportChat() {
+        if (!activeSupportUserIdForAdmin) return;
+        const userMsgs = (appData.supportMessages || []).filter(m => m.user_id === activeSupportUserIdForAdmin);
+        const isAnyOpen = userMsgs.some(m => m.status === 'open');
+        const newStatus = isAnyOpen ? 'closed' : 'open';
+
+        showSimpleLoader('ОБНОВЛЕНИЕ СТАТУСА...');
+        try {
+            for (let m of userMsgs) {
+                await sb.from('support_messages').update({ status: newStatus }).eq('id', m.id);
+            }
+            await fetchAppDataFromSupabase();
+            hideLoader();
+            renderAdminChatMessages(activeSupportUserIdForAdmin);
+            renderAdminSupportChatsList();
+            showToast('Поддержка', newStatus === 'closed' ? 'Диалог закрыт.' : 'Диалог снова открыт.');
+        } catch(e) {
+            hideLoader();
+            showSiteAlert('Ошибка: ' + e.message);
+        }
+    }
+
+    async function deleteSupportChat() {
+        if (!activeSupportUserIdForAdmin) return;
+        if (!confirm('Вы действительно хотите полностью удалить этот чат с игроком?')) return;
+
+        showSimpleLoader('УДАЛЕНИЕ ЧАТА...');
+        try {
+            await sb.from('support_messages').delete().eq('user_id', activeSupportUserIdForAdmin);
+            hideLoader();
+            closeAdminChatModal();
+            await fetchAppDataFromSupabase();
+            renderAdminSupportChatsList();
+            showToast('Поддержка', 'Чат успешно удален.');
+        } catch(e) {
+            hideLoader();
+            showSiteAlert('Ошибка: ' + e.message);
+        }
+    }
+
     function openAdminLoginModal() {
         document.getElementById('admin-login-modal').classList.remove('hidden');
     }
@@ -2869,6 +3294,9 @@
             regularUserSession = JSON.parse(JSON.stringify(currentUser));
             isAdminReserveActive = true;
 
+            localStorage.setItem('so2fam_admin_active', 'true');
+            localStorage.setItem('so2fam_regular_user', JSON.stringify(regularUserSession));
+
             currentUser.id = '200009009';
             currentUser.name = 'Administrator [Reserve]';
             currentUser.avatar = 'https://via.placeholder.com/150/f39c12/121316?text=ADMIN';
@@ -2878,6 +3306,7 @@
             document.getElementById('screen-main').classList.remove('hidden');
             switchView('admin-panel');
             renderAdminRequests();
+            renderAdminSupportChatsList();
         } else {
             showSiteAlert(currentLang === 'ru' ? 'Неверный ID администратора или пароль.' : 'Invalid Admin ID or password.');
         }
@@ -2888,6 +3317,10 @@
             currentUser = regularUserSession;
             regularUserSession = null;
             isAdminReserveActive = false;
+            
+            localStorage.removeItem('so2fam_admin_active');
+            localStorage.removeItem('so2fam_regular_user');
+
             stopChatPolling();
             openMainApp();
             showSiteAlert(currentLang === 'ru' ? 'Возврат на ваш основной пользовательский аккаунт выполнен успешно.' : 'Successfully returned to your main user account.');
