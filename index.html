@@ -43,17 +43,12 @@
             overflow: hidden;
         }
 
-        #bg-layer {
+        #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #121316;
-            background-image: linear-gradient(rgba(18, 19, 22, 0.5), rgba(18, 19, 22, 0.75)), url('https://vsacaavjrsocaejksacr.supabase.co/storage/v1/object/public/musik/hd_ea54070ef7cde72b48fc8719a2703f53.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
             z-index: 0;
             pointer-events: none;
         }
@@ -90,11 +85,13 @@
             align-items: center;
             padding: 12px;
             z-index: 10;
-            transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            opacity: 1;
+            transition: opacity 0.3s ease;
         }
 
         .screen.hidden {
-            display: none;
+            display: none !important;
             opacity: 0;
             pointer-events: none;
         }
@@ -102,7 +99,7 @@
         .auth-container {
             width: 100%;
             max-width: 380px;
-            background-image: linear-gradient(rgba(26, 28, 32, 0.95), rgba(26, 28, 32, 0.99)), url('https://fotovssylku.ru/i/1791648775599.ubZIe');
+            background-image: linear-gradient(rgba(26, 28, 32, 0.95), rgba(26, 28, 32, 0.99)), url('https://vsacaavjrsocaejksacr.supabase.co/storage/v1/object/public/musik/hd_ea54070ef7cde72b48fc8719a2703f53.jpg');
             background-size: cover;
             background-position: center;
             border: 1px solid var(--border-color);
@@ -110,6 +107,7 @@
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             backdrop-filter: blur(8px);
+            margin: auto;
         }
 
         h1, h2, h3 {
@@ -207,41 +205,42 @@
         }
 
         .loading-overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(18, 19, 22, 0.85);
-            backdrop-filter: blur(5px);
+            width: 100vw;
+            height: 100vh;
+            background: rgba(18, 19, 22, 0.92);
+            backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 100;
+            z-index: 9999;
             padding: 20px;
             text-align: center;
+            transition: opacity 0.4s ease;
         }
 
         .loading-overlay.hidden {
-            display: none;
             opacity: 0;
             pointer-events: none;
+            display: none !important;
         }
 
         .spinner-dots {
             display: flex;
             gap: 6px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .spinner-dots div {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             background-color: var(--accent-gold);
             border-radius: 50%;
             animation: bounceDot 0.55s infinite alternate ease-in-out;
-            box-shadow: 0 0 6px var(--accent-gold);
+            box-shadow: 0 0 8px var(--accent-gold);
         }
 
         .spinner-dots div:nth-child(2) { animation-delay: 0.18s; }
@@ -249,7 +248,7 @@
 
         @keyframes bounceDot {
             from { transform: translateY(0); opacity: 0.4; }
-            to { transform: translateY(-7px); opacity: 1; }
+            to { transform: translateY(-9px); opacity: 1; }
         }
 
         .bottom-nav {
@@ -264,6 +263,7 @@
             z-index: 50;
             box-shadow: 0 -4px 16px rgba(0,0,0,0.4);
             backdrop-filter: blur(8px);
+            flex-shrink: 0;
         }
 
         .nav-indicator {
@@ -324,6 +324,8 @@
             width: 100%;
             height: 100%;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .main-content {
@@ -331,20 +333,21 @@
             height: calc(100vh - 52px);
             padding: 14px;
             overflow-y: auto;
+            padding-bottom: 60px;
         }
 
         .view {
-            display: none;
-            max-width: 100%;
-            margin: 0 auto;
+            display: none !important;
+            opacity: 0;
         }
 
         .view.active {
-            display: block;
-            animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block !important;
+            opacity: 1;
+            animation: fadeInView 0.2s ease forwards;
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeInView {
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
@@ -441,9 +444,10 @@
             z-index: 1000;
             padding: 12px;
             backdrop-filter: blur(4px);
+            overflow-y: auto;
         }
 
-        .modal-overlay.hidden { display: none; opacity: 0; pointer-events: none; }
+        .modal-overlay.hidden { display: none !important; opacity: 0; pointer-events: none; }
 
         .modal-box {
             background: var(--bg-panel);
@@ -453,6 +457,7 @@
             width: 100%;
             max-width: 360px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+            margin: auto;
         }
 
         .badge-tag {
@@ -518,7 +523,45 @@
         }
 
         .profile-body {
-            padding: 46px 16px 12px 16px;
+            padding: 46px 16px 16px 16px;
+        }
+
+        /* Детализированная анимированная CSS кнопка выхода в самом нижнем правом углу сайта (над панелью навигации) */
+        .global-logout-bottom-btn {
+            position: fixed;
+            bottom: 64px;
+            right: 14px;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #2c2f36, #1a1c20);
+            border: 1.5px solid var(--accent-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(243, 156, 18, 0.4);
+            z-index: 998;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .global-logout-bottom-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, #f39c12, #d35400);
+            border-color: #fff;
+            box-shadow: 0 0 20px var(--accent-gold);
+        }
+
+        .global-logout-bottom-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent-gold);
+            transition: fill 0.2s;
+        }
+
+        .global-logout-bottom-btn:hover svg {
+            fill: #fff;
         }
 
         .editable-name {
@@ -527,7 +570,6 @@
             display: inline-block;
         }
 
-        /* Полноэкранная страница клана */
         .clan-detail-page {
             width: 100%;
             height: 100%;
@@ -658,7 +700,7 @@
             z-index: 9999;
             backdrop-filter: blur(8px);
         }
-        #privacy-push.hidden { display: none; opacity: 0; pointer-events: none; }
+        #privacy-push.hidden { display: none !important; opacity: 0; pointer-events: none; }
 
         #toast-container {
             position: fixed;
@@ -686,21 +728,21 @@
 </head>
 <body>
 
-    <div id="bg-layer"></div>
+    <canvas id="bg-canvas"></canvas>
     <canvas id="snow-canvas"></canvas>
     
-    <!-- Фоновый аудиоэлемент (Interworld - Metamorphosis) -->
     <audio id="bg-audio" loop preload="auto" crossorigin="anonymous" src="https://vsacaavjrsocaejksacr.supabase.co/storage/v1/object/public/musik/SVID_20261011_163849_1.mp3"></audio>
 
     <div class="creator-watermark">@nazaros2009 (SO2fam 2026®)</div>
 
     <div id="toast-container"></div>
 
+    <!-- Общий лоадер с увеличенной длительностью последней фазы -->
     <div id="global-loader" class="loading-overlay">
         <div class="spinner-dots">
             <div></div><div></div><div></div>
         </div>
-        <p id="loader-text" style="color: var(--accent-gold); font-weight: 600; font-size: 10.5px; margin-top: 4px;">ЗАГРУЗКА...</p>
+        <p id="loader-text" style="color: var(--accent-gold); font-weight: 600; font-size: 11px; margin-top: 6px; letter-spacing: 0.8px;">ЗАГРУЗКА ИНТЕРФЕЙСА...</p>
     </div>
 
 <div id="app">
@@ -721,6 +763,11 @@
             <input type="text" id="auth-id" placeholder="Игровой ID (например: 123456789)" maxlength="15">
             <input type="text" id="auth-name" placeholder="Имя пользователя" maxlength="25">
             <button class="btn btn-gold" id="t-auth-btn" onclick="registerUser()">Войти в систему</button>
+            
+            <div id="auth-accounts-switcher" style="margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 10px; display: none;">
+                <p style="font-size: 9.5px; color: var(--accent-gold); margin-bottom: 6px;">СОХРАНЕННЫЕ АККАУНТЫ:</p>
+                <div id="auth-saved-accounts-list" style="display: flex; flex-direction: column; gap: 5px;"></div>
+            </div>
         </div>
     </div>
 
@@ -794,9 +841,8 @@
                                 <p id="profile-display-bio" style="font-size: 11px; color: var(--text-main); margin: 0; word-break: break-word;">Нет описания...</p>
                             </div>
 
-                            <!-- Блок статусов заявок и клана -->
                             <div id="profile-clan-section"></div>
-                            
+
                             <div id="admin-reserve-exit" style="margin-top: 10px; display: none;">
                                 <button class="btn btn-danger" id="t-exit-admin-btn" onclick="exitAdminReserveAccount()">Выйти из аккаунта администратора</button>
                             </div>
@@ -834,6 +880,11 @@
                 </div>
 
             </div>
+
+            <!-- Красивая анимированная кнопка выхода в самом нижнем правом углу сайта -->
+            <button class="global-logout-bottom-btn" onclick="logoutAccount()" title="Выйти из аккаунта">
+                <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+            </button>
 
             <div class="bottom-nav">
                 <div id="nav-indicator" class="nav-indicator"></div>
@@ -931,7 +982,6 @@
 </div>
 
 <script>
-    // --- Премиальные киберспортивные аватарки по умолчанию ---
     const defaultAvatarsPool = [
         'https://api.dicebear.com/7.x/avataaars/svg?seed=SO2ProGamer1&backgroundColor=f39c12',
         'https://api.dicebear.com/7.x/avataaars/svg?seed=StandoffLegend2&backgroundColor=e74c3c',
@@ -940,24 +990,23 @@
         'https://api.dicebear.com/7.x/avataaars/svg?seed=ViperSO25&backgroundColor=9b59b6'
     ];
 
-    // --- Автозапуск фоновой музыки ---
-    let audioStarted = false;
-
-    function tryPlayAudio() {
+    let musicInitialized = false;
+    function initAndPlayAudio() {
         const audio = document.getElementById('bg-audio');
-        if (audio && !audioStarted) {
-            audio.volume = 0.25;
-            audio.play().then(() => {
-                audioStarted = true;
-            }).catch(e => {
-                console.log("Audio waiting for user gesture:", e);
-            });
-        }
-    }
+        if (!audio) return;
+        audio.volume = 0.25;
 
-    window.addEventListener('click', tryPlayAudio, { once: false });
-    window.addEventListener('touchstart', tryPlayAudio, { once: false });
-    window.addEventListener('keydown', tryPlayAudio, { once: false });
+        const unlockAndPlay = () => {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    musicInitialized = true;
+                }).catch(err => {});
+            }
+        };
+
+        window.addEventListener('click', unlockAndPlay, { once: true });
+        window.addEventListener('touchstart', unlockAndPlay, { once: true });
+    }
 
     document.addEventListener('visibilitychange', function() {
         const audio = document.getElementById('bg-audio');
@@ -975,50 +1024,92 @@
         }
     });
 
-    let loaderTimeout10 = null;
-    let loaderTimeout120 = null;
+    // Увеличенная длительность второй фазы загрузки для плавной подготовки интерфейса
+    function showLoaderSequence(text1, text2, callback) {
+        const loader = document.getElementById('global-loader');
+        const loaderText = document.getElementById('loader-text');
+        loader.classList.remove('hidden');
+        
+        loaderText.innerText = text1;
+        setTimeout(() => {
+            loaderText.innerText = text2;
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                if (callback) callback();
+            }, 1400); // Увеличено до 1.4 секунды для комфортной загрузки всего интерфейса
+        }, 800);
+    }
 
-    function showLoader(text) {
-        const loaderTextEl = document.getElementById('loader-text');
-        if (loaderTextEl) {
-            loaderTextEl.innerText = text || dict[currentLang].loader;
-        }
-        document.getElementById('global-loader').classList.remove('hidden');
-
-        if (loaderTimeout10) clearTimeout(loaderTimeout10);
-        if (loaderTimeout120) clearTimeout(loaderTimeout120);
-
-        loaderTimeout10 = setTimeout(() => {
-            const el = document.getElementById('loader-text');
-            if (el && !document.getElementById('global-loader').classList.contains('hidden')) {
-                el.innerText = currentLang === 'ru' 
-                    ? 'Приносим извинения, что так долго это продолжается' 
-                    : 'We apologize that this is taking so long';
-            }
-        }, 10000);
-
-        loaderTimeout120 = setTimeout(() => {
-            const el = document.getElementById('loader-text');
-            if (el && !document.getElementById('global-loader').classList.contains('hidden')) {
-                el.innerText = currentLang === 'ru' 
-                    ? 'Сервер не отвечает или слишком долгая загрузка. Пожалуйста, перезагрузите сайт полностью.' 
-                    : 'Server is not responding or loading took too long. Please reload the site completely.';
-                
-                showSiteAlert(
-                    currentLang === 'ru' 
-                        ? 'Превышено время ожидания сервера. Пожалуйста, перезагрузите страницу.' 
-                        : 'Server timeout exceeded. Please reload the page.', 
-                    () => { window.location.reload(); }
-                );
-            }
-        }, 120000);
+    function showSimpleLoader(text) {
+        const loader = document.getElementById('global-loader');
+        const loaderText = document.getElementById('loader-text');
+        loaderText.innerText = text || 'ЗАГРУЗКА...';
+        loader.classList.remove('hidden');
     }
 
     function hideLoader() {
-        if (loaderTimeout10) clearTimeout(loaderTimeout10);
-        if (loaderTimeout120) clearTimeout(loaderTimeout120);
         document.getElementById('global-loader').classList.add('hidden');
     }
+
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    const bgImg = new Image();
+    bgImg.crossOrigin = "anonymous";
+    bgImg.src = 'https://vsacaavjrsocaejksacr.supabase.co/storage/v1/object/public/musik/hd_ea54070ef7cde72b48fc8719a2703f53.jpg';
+
+    let bgLoaded = false;
+    bgImg.onload = function() {
+        bgLoaded = true;
+    };
+
+    function resizeBgCanvas() {
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeBgCanvas);
+    resizeBgCanvas();
+
+    let glitchTimer = 0;
+    function renderDynamicBackground() {
+        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+        if (bgLoaded) {
+            glitchTimer++;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            if (glitchTimer % 180 === 0 || glitchTimer % 183 === 0) {
+                offsetX = (Math.random() - 0.5) * 8;
+                offsetY = (Math.random() - 0.5) * 6;
+            } else {
+                offsetX = Math.sin(glitchTimer * 0.03) * 3;
+                offsetY = Math.cos(glitchTimer * 0.02) * 2;
+            }
+
+            const hRatio = bgCanvas.width / bgImg.width;
+            const vRatio = bgCanvas.height / bgImg.height;
+            const ratio = Math.max(hRatio, vRatio);
+            
+            const drawWidth = bgImg.width * ratio;
+            const drawHeight = bgImg.height * ratio;
+            const drawX = (bgCanvas.width - drawWidth) / 2 + offsetX;
+            const drawY = (bgCanvas.height - drawHeight) / 2 + offsetY;
+
+            bgCtx.drawImage(bgImg, drawX, drawY, drawWidth, drawHeight);
+
+            bgCtx.fillStyle = 'rgba(18, 19, 22, 0.42)';
+            bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+            if (glitchTimer % 240 === 0) {
+                bgCtx.fillStyle = 'rgba(243, 156, 18, 0.08)';
+                const bandY = Math.random() * bgCanvas.height;
+                bgCtx.fillRect(0, bandY, bgCanvas.width, Math.random() * 20 + 5);
+            }
+        }
+
+        requestAnimationFrame(renderDynamicBackground);
+    }
+    renderDynamicBackground();
 
     const snowCanvas = document.getElementById('snow-canvas');
     const snowCtx = snowCanvas.getContext('2d');
@@ -1444,7 +1535,7 @@
             name: 'Absolute Standoff',
             tag: '[ABS]',
             description: 'Профессиональный киберспортивный клан Standoff 2. Требования: от 15 лет, ранг от Легенды, праксис каждый вечер.',
-            photo: 'https://fotovssylku.ru/i/1791648775599.ubZIe',
+            photo: 'https://vsacaavjrsocaejksacr.supabase.co/storage/v1/object/public/musik/hd_ea54070ef7cde72b48fc8719a2703f53.jpg',
             owner_id: 'admin_abs',
             members: [],
             chat: []
@@ -1463,53 +1554,45 @@
 
     async function fetchAppDataFromSupabase() {
         try {
-            const fetchPromise = async () => {
-                const { data: clansData } = await sb.from('clans').select('*');
-                const { data: membersData } = await sb.from('profiles').select('*');
-                const { data: chatData } = await sb.from('clan_chat').select('*');
-                const { data: reqsData } = await sb.from('join_requests').select('*');
-                const { data: pendingData } = await sb.from('pending_clans').select('*');
-                const { data: notifsData } = await sb.from('notifications').select('*');
+            const { data: clansData } = await sb.from('clans').select('*');
+            const { data: membersData } = await sb.from('profiles').select('*');
+            const { data: chatData } = await sb.from('clan_chat').select('*');
+            const { data: reqsData } = await sb.from('join_requests').select('*');
+            const { data: pendingData } = await sb.from('pending_clans').select('*');
+            const { data: notifsData } = await sb.from('notifications').select('*');
 
-                let loadedClans = (clansData || []).map(c => ({
-                    ...c,
-                    photo: c.photo && c.photo.trim() !== '' ? c.photo : 'https://via.placeholder.com/700x200/25282e/f39c12?text=SO2+CLAN',
-                    desc: c.description,
-                    members: (membersData || []).filter(m => m.clan_id === c.id),
-                    chat: (chatData || []).filter(ch => ch.clan_id === c.id)
-                }));
+            let loadedClans = (clansData || []).map(c => ({
+                ...c,
+                photo: c.photo && c.photo.trim() !== '' ? c.photo : 'https://via.placeholder.com/700x200/25282e/f39c12?text=SO2+CLAN',
+                desc: c.description,
+                members: (membersData || []).filter(m => m.clan_id === c.id),
+                chat: (chatData || []).filter(ch => ch.clan_id === c.id)
+            }));
 
-                if (loadedClans.length === 0) {
-                    loadedClans = defaultSampleClans;
+            if (loadedClans.length === 0) {
+                loadedClans = defaultSampleClans;
+            }
+
+            appData.clans = loadedClans;
+            appData.joinRequests = reqsData || [];
+            appData.pendingClans = pendingData || [];
+            appData.notifications = notifsData || [];
+            
+            if (currentUser.id) {
+                const myProf = (membersData || []).find(m => m.id === currentUser.id);
+                if (myProf) {
+                    currentUser.clanId = myProf.clan_id;
+                    currentUser.clan_id = myProf.clan_id;
+                    currentUser.name = myProf.name || currentUser.name;
+                    currentUser.avatar = myProf.avatar || currentUser.avatar;
+                    currentUser.bio = myProf.bio || currentUser.bio;
+                    saveCurrentAccountToSavedList(currentUser);
                 }
-
-                appData.clans = loadedClans;
-                appData.joinRequests = reqsData || [];
-                appData.pendingClans = pendingData || [];
-                appData.notifications = notifsData || [];
-                
-                if (currentUser.id) {
-                    const myProf = (membersData || []).find(m => m.id === currentUser.id);
-                    if (myProf) {
-                        currentUser.clanId = myProf.clan_id;
-                        currentUser.clan_id = myProf.clan_id;
-                        currentUser.name = myProf.name || currentUser.name;
-                        currentUser.avatar = myProf.avatar || currentUser.avatar;
-                        currentUser.bio = myProf.bio || currentUser.bio;
-                        localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
-                    }
-                }
-                
-                checkUnreadStatus();
-            };
-
-            const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Timeout')), 6000)
-            );
-
-            await Promise.race([fetchPromise(), timeoutPromise]);
+            }
+            
+            checkUnreadStatus();
         } catch (err) {
-            console.warn('Supabase fallback to demo data:', err);
+            console.warn('Supabase offline fallback:', err);
             if (!appData.clans || appData.clans.length === 0) {
                 appData.clans = defaultSampleClans;
             }
@@ -1527,7 +1610,6 @@
         });
         if (myRequests.length > 0) hasUnread = true;
 
-        // Фильтрация уведомлений строго по текущему пользователю
         const unreadNotifs = (appData.notifications || []).filter(n => n.user_id === currentUser.id && n.unread);
         if (unreadNotifs.length > 0) hasUnread = true;
 
@@ -1538,10 +1620,78 @@
         }
     }
 
+    function getSavedAccounts() {
+        try {
+            const list = JSON.parse(localStorage.getItem('so2fam_saved_accounts') || '[]');
+            return Array.isArray(list) ? list : [];
+        } catch(e) {
+            return [];
+        }
+    }
+
+    function saveCurrentAccountToSavedList(acc) {
+        if (!acc || !acc.id) return;
+        let list = getSavedAccounts();
+        const existingIdx = list.findIndex(x => x.id === acc.id);
+        if (existingIdx !== -1) {
+            list[existingIdx] = acc;
+        } else {
+            if (list.length >= 3) {
+                list.pop();
+            }
+            list.unshift(acc);
+        }
+        localStorage.setItem('so2fam_saved_accounts', JSON.stringify(list));
+    }
+
+    function renderSavedAccountsOnAuth() {
+        const container = document.getElementById('auth-saved-accounts-list');
+        const wrapper = document.getElementById('auth-accounts-switcher');
+        const list = getSavedAccounts();
+
+        if (list.length === 0) {
+            wrapper.style.display = 'none';
+            return;
+        }
+
+        wrapper.style.display = 'block';
+        container.innerHTML = list.map(acc => `
+            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(20,21,24,0.8); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 6px;">
+                <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; cursor: pointer;" onclick="quickLoginAccount('${acc.id}')">
+                    <img src="${acc.avatar}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                    <div style="text-align: left; overflow: hidden;">
+                        <p style="margin: 0; font-size: 10px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><b>${acc.name}</b> (ID: ${acc.id})</p>
+                    </div>
+                </div>
+                <button class="btn btn-danger" style="width: auto; margin:0; padding: 2px 6px; font-size: 8.5px;" onclick="removeSavedAccount('${acc.id}')">[✕]</button>
+            </div>
+        `).join('');
+    }
+
+    function quickLoginAccount(id) {
+        const list = getSavedAccounts();
+        const found = list.find(x => x.id === id);
+        if (found) {
+            currentUser = found;
+            localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+            sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+            
+            showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ...', async () => {
+                document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+                await openMainApp();
+            });
+        }
+    }
+
+    function removeSavedAccount(id) {
+        let list = getSavedAccounts();
+        list = list.filter(x => x.id !== id);
+        localStorage.setItem('so2fam_saved_accounts', JSON.stringify(list));
+        renderSavedAccountsOnAuth();
+    }
+
     window.onload = async function() {
-        showLoader(currentLang === 'ru' ? 'ЗАГРУЗКА...' : 'LOADING...');
-        await fetchAppDataFromSupabase();
-        hideLoader();
+        initAndPlayAudio();
 
         let savedUserJson = localStorage.getItem('so2fam_current_user');
         if (!savedUserJson) {
@@ -1560,25 +1710,32 @@
                         clanId: parsed.clanId || parsed.clan_id
                     };
                     
+                    saveCurrentAccountToSavedList(currentUser);
                     localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
                     sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
 
                     const urlParams = new URLSearchParams(window.location.search);
                     const inviteClanId = urlParams.get('clan');
 
-                    await openMainApp();
+                    showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ...', async () => {
+                        await openMainApp();
+                        fetchAppDataFromSupabase();
 
-                    if (inviteClanId) {
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                        openClanDetail(inviteClanId);
-                    }
+                        if (inviteClanId) {
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                            openClanDetail(inviteClanId);
+                        }
+                    });
                     return;
                 }
             } catch (e) {
                 console.error(e);
             }
         }
-        document.getElementById('screen-lang').classList.remove('hidden');
+        
+        showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ...', () => {
+            document.getElementById('screen-lang').classList.remove('hidden');
+        });
     };
 
     function setLanguage(lang) {
@@ -1587,6 +1744,7 @@
         updateLanguageUI();
         document.getElementById('screen-lang').classList.add('hidden');
         document.getElementById('screen-auth').classList.remove('hidden');
+        renderSavedAccountsOnAuth();
     }
 
     async function registerUser() {
@@ -1609,50 +1767,67 @@
             return;
         }
 
-        showLoader(currentLang === 'ru' ? 'АВТОРИЗАЦИЯ...' : 'SIGNING IN...');
-
-        // Выбираем красивую случайную премиум-аватарку из пула
         const randomDefaultAvatar = defaultAvatarsPool[Math.floor(Math.random() * defaultAvatarsPool.length)];
 
-        try {
-            let existingProfile = null;
+        showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ...', async () => {
             try {
-                let res = await sb.from('profiles').select('*').eq('id', idInput).single();
-                existingProfile = res.data;
-            } catch(e) {}
-
-            if (!existingProfile) {
-                const newProf = {
-                    id: idInput,
-                    name: nameInput,
-                    avatar: randomDefaultAvatar,
-                    bio: currentLang === 'ru' ? 'Привет! Я играю в Standoff 2 и ищу сильный клан.' : 'Hi! I play Standoff 2 and look for a strong clan.',
-                    clan_id: null
-                };
+                let existingProfile = null;
                 try {
-                    await sb.from('profiles').insert([newProf]);
+                    let res = await sb.from('profiles').select('*').eq('id', idInput).single();
+                    existingProfile = res.data;
                 } catch(e) {}
-                currentUser = newProf;
-            } else {
-                currentUser = {
-                    id: existingProfile.id,
-                    name: existingProfile.name,
-                    avatar: existingProfile.avatar || randomDefaultAvatar,
-                    bio: existingProfile.bio,
-                    clanId: existingProfile.clan_id
-                };
+
+                if (!existingProfile) {
+                    const newProf = {
+                        id: idInput,
+                        name: nameInput,
+                        avatar: randomDefaultAvatar,
+                        bio: currentLang === 'ru' ? 'Привет! Я играю в Standoff 2 и ищу сильный клан.' : 'Hi! I play Standoff 2 and look for a strong clan.',
+                        clan_id: null
+                    };
+                    try {
+                        await sb.from('profiles').insert([newProf]);
+                    } catch(e) {}
+                    currentUser = newProf;
+                } else {
+                    currentUser = {
+                        id: existingProfile.id,
+                        name: existingProfile.name,
+                        avatar: existingProfile.avatar || randomDefaultAvatar,
+                        bio: existingProfile.bio,
+                        clanId: existingProfile.clan_id
+                    };
+                }
+
+                saveCurrentAccountToSavedList(currentUser);
+                localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+                sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+
+                document.getElementById('screen-auth').classList.add('hidden');
+                document.getElementById('screen-welcome-info').classList.remove('hidden');
+            } catch (err) {
+                showSiteAlert('Error: ' + err.message);
             }
+        });
+    }
 
-            localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
-            sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
+    function logoutAccount() {
+        if (!confirm(currentLang === 'ru' ? 'Вы действительно хотите выйти из аккаунта?' : 'Do you really want to log out?')) return;
+        
+        showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ВЫХОД И СБРОС ДАННЫХ...', () => {
+            saveCurrentAccountToSavedList(currentUser);
+            localStorage.removeItem('so2fam_current_user');
+            sessionStorage.removeItem('so2fam_current_user');
+            
+            currentUser = { id: '', name: '', avatar: '', clanId: null, bio: '' };
+            stopChatPolling();
 
-            hideLoader();
-            document.getElementById('screen-auth').classList.add('hidden');
-            document.getElementById('screen-welcome-info').classList.remove('hidden');
-        } catch (err) {
-            hideLoader();
-            showSiteAlert('Error: ' + err.message);
-        }
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById('screen-auth').classList.remove('hidden');
+            document.getElementById('auth-id').value = '';
+            document.getElementById('auth-name').value = '';
+            renderSavedAccountsOnAuth();
+        });
     }
 
     function goToHubChoice() {
@@ -1667,9 +1842,7 @@
     }
 
     async function openMainApp() {
-        showLoader();
         await fetchAppDataFromSupabase();
-        hideLoader();
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         document.getElementById('screen-main').classList.remove('hidden');
         switchView('feed', document.querySelector('.nav-item'), 0);
@@ -1690,9 +1863,16 @@
             stopChatPolling();
         }
 
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.view').forEach(v => {
+            v.classList.remove('active');
+            v.style.display = 'none';
+        });
+
         const target = document.getElementById('view-' + viewName);
-        if (target) target.classList.add('active');
+        if (target) {
+            target.style.display = 'block';
+            target.classList.add('active');
+        }
 
         if (navElement) {
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
@@ -1735,6 +1915,7 @@
                 await sb.from('profiles').update({ name: trimmed }).eq('id', currentUser.id);
                 await sb.from('clan_chat').update({ sender_name: trimmed }).eq('sender_id', currentUser.id);
             } catch(e) {}
+            saveCurrentAccountToSavedList(currentUser);
             localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             renderProfile();
@@ -1754,6 +1935,7 @@
             try {
                 await sb.from('profiles').update({ bio: trimmed }).eq('id', currentUser.id);
             } catch(e) {}
+            saveCurrentAccountToSavedList(currentUser);
             localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             renderProfile();
@@ -1766,7 +1948,7 @@
     }
 
     async function handleAvatarFileSelect(input) {
-        showLoader(currentLang === 'ru' ? 'ОБРАБОТКА ФОТО...' : 'PROCESSING PHOTO...');
+        showSimpleLoader(currentLang === 'ru' ? 'ОБРАБОТКА ФОТО...' : 'PROCESSING PHOTO...');
         convertFileToBase64(input, async function(base64Image) {
             if (base64Image) {
                 currentUser.avatar = base64Image;
@@ -1774,6 +1956,7 @@
                     await sb.from('profiles').update({ avatar: base64Image }).eq('id', currentUser.id);
                     await sb.from('clan_chat').update({ sender_avatar: base64Image }).eq('sender_id', currentUser.id);
                 } catch(e) {}
+                saveCurrentAccountToSavedList(currentUser);
                 localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
                 sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
                 hideLoader();
@@ -1948,7 +2131,7 @@
 
     async function kickMember(memberId, clanId) {
         if (!confirm(currentLang === 'ru' ? 'Вы действительно хотите исключить этого участника из клана?' : 'Do you really want to kick this member from the clan?')) return;
-        showLoader(currentLang === 'ru' ? 'ИСКЛЮЧЕНИЕ...' : 'KICKING...');
+        showSimpleLoader(currentLang === 'ru' ? 'ИСКЛЮЧЕНИЕ...' : 'KICKING...');
         try {
             await sb.from('profiles').update({ clan_id: null }).eq('id', memberId);
             await fetchAppDataFromSupabase();
@@ -2136,7 +2319,7 @@
 
         const fileInput = document.getElementById('edit-clan-photo-file');
 
-        showLoader(currentLang === 'ru' ? 'СОХРАНЕНИЕ...' : 'SAVING...');
+        showSimpleLoader(currentLang === 'ru' ? 'СОХРАНЕНИЕ...' : 'SAVING...');
         convertFileToBase64(fileInput, async function(base64Photo) {
             let updatePayload = { description: desc };
             if (base64Photo) updatePayload.photo = base64Photo;
@@ -2190,7 +2373,7 @@
     }
 
     async function cancelMyJoinRequest(reqId) {
-        showLoader(currentLang === 'ru' ? 'ОТМЕНА ЗАЯВКИ...' : 'CANCELLING REQUEST...');
+        showSimpleLoader(currentLang === 'ru' ? 'ОТМЕНА ЗАЯВКИ...' : 'CANCELLING REQUEST...');
         try {
             await sb.from('join_requests').delete().eq('id', reqId);
         } catch(e) {}
@@ -2201,7 +2384,7 @@
     }
 
     async function cancelMyPendingClan(reqId) {
-        showLoader(currentLang === 'ru' ? 'ОТМЕНА МОДЕРАЦИИ...' : 'CANCELLING MODERATION...');
+        showSimpleLoader(currentLang === 'ru' ? 'ОТМЕНА МОДЕРАЦИИ...' : 'CANCELLING MODERATION...');
         try {
             await sb.from('pending_clans').delete().eq('id', reqId);
         } catch(e) {}
@@ -2215,7 +2398,7 @@
         if (!confirm(currentLang === 'ru' ? 'Вы действительно хотите удалить свой клан? Это действие необратимо.' : 'Do you really want to delete your clan? This is irreversible.')) return;
         if (!confirm(currentLang === 'ru' ? 'ТОЧНО УДОСТОВЕРЬТЕСЬ: Вы хотите полностью удалить клан со всеми участниками?' : 'CONFIRM: Do you want to completely delete the clan with all members?')) return;
 
-        showLoader(currentLang === 'ru' ? 'УДАЛЕНИЕ КЛАНА...' : 'DELETING CLAN...');
+        showSimpleLoader(currentLang === 'ru' ? 'УДАЛЕНИЕ КЛАНА...' : 'DELETING CLAN...');
         try {
             await sb.from('clans').delete().eq('id', clanId);
             await sb.from('profiles').update({ clan_id: null }).eq('clan_id', clanId);
@@ -2224,6 +2407,7 @@
         if (currentUser.clanId === clanId || currentUser.clan_id === clanId) {
             currentUser.clanId = null;
             currentUser.clan_id = null;
+            saveCurrentAccountToSavedList(currentUser);
             localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
         }
@@ -2245,7 +2429,7 @@
 
             const notif = {
                 id: Date.now() + '_' + Math.floor(Math.random()*1000),
-                user_id: req.user_id, // Личное уведомление строго для этого игрока!
+                user_id: req.user_id,
                 text: currentLang === 'ru' ? `Поздравляем! Ваша заявка на вступление в клан ${req.clan_name} была принята.` : `Congratulations! Your request to join ${req.clan_name} was accepted.`,
                 unread: true
             };
@@ -2298,7 +2482,7 @@
             return;
         }
 
-        showLoader(currentLang === 'ru' ? 'ОБРАБОТКА...' : 'PROCESSING...');
+        showSimpleLoader(currentLang === 'ru' ? 'ОБРАБОТКА...' : 'PROCESSING...');
         convertFileToBase64(fileInput, async function(base64Photo) {
             const newClanReq = {
                 id: 'reqclan_' + Date.now(),
@@ -2387,6 +2571,7 @@
         } catch(e) {}
         currentUser.clanId = null;
         currentUser.clan_id = null;
+        saveCurrentAccountToSavedList(currentUser);
         localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
         sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
         await fetchAppDataFromSupabase();
@@ -2427,7 +2612,6 @@
             `).join('');
         }
 
-        // Фильтруем уведомления строго по текущему пользователю
         const userNotifs = (appData.notifications || []).filter(n => n.user_id === currentUser.id);
         const uniqueNotifs = Array.from(new Map(userNotifs.map(n => [n.id, n])).values());
         
@@ -2459,28 +2643,24 @@
         const adminId = document.getElementById('admin-input-id').value.trim();
         const adminPass = document.getElementById('admin-input-pass').value.trim();
 
-        showLoader(currentLang === 'ru' ? 'АВТОРИЗАЦИЯ...' : 'AUTHORIZING...');
-        setTimeout(() => {
-            hideLoader();
-            if (adminId === '200009009' && adminPass === 'umnov2009') {
-                closeAdminLoginModal();
-                
-                regularUserSession = JSON.parse(JSON.stringify(currentUser));
-                isAdminReserveActive = true;
+        if (adminId === '200009009' && adminPass === 'umnov2009') {
+            closeAdminLoginModal();
+            
+            regularUserSession = JSON.parse(JSON.stringify(currentUser));
+            isAdminReserveActive = true;
 
-                currentUser.id = '200009009';
-                currentUser.name = 'Administrator [Reserve]';
-                currentUser.avatar = 'https://via.placeholder.com/150/f39c12/121316?text=ADMIN';
-                currentUser.clanId = '1';
+            currentUser.id = '200009009';
+            currentUser.name = 'Administrator [Reserve]';
+            currentUser.avatar = 'https://via.placeholder.com/150/f39c12/121316?text=ADMIN';
+            currentUser.clanId = '1';
 
-                document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-                document.getElementById('screen-main').classList.remove('hidden');
-                switchView('admin-panel');
-                renderAdminRequests();
-            } else {
-                showSiteAlert(currentLang === 'ru' ? 'Неверный ID администратора или пароль.' : 'Invalid Admin ID or password.');
-            }
-        }, 300);
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById('screen-main').classList.remove('hidden');
+            switchView('admin-panel');
+            renderAdminRequests();
+        } else {
+            showSiteAlert(currentLang === 'ru' ? 'Неверный ID администратора или пароль.' : 'Invalid Admin ID or password.');
+        }
     }
 
     function exitAdminReserveAccount() {
@@ -2519,7 +2699,7 @@
     }
 
     async function approveClan(reqId) {
-        showLoader(currentLang === 'ru' ? 'СОЗДАНИЕ...' : 'CREATING...');
+        showSimpleLoader(currentLang === 'ru' ? 'СОЗДАНИЕ...' : 'CREATING...');
         const req = appData.pendingClans.find(r => r.id === reqId);
         if (!req) { hideLoader(); return; }
 
@@ -2550,6 +2730,7 @@
         if (req.user_id === currentUser.id) {
             currentUser.clanId = newClanId;
             currentUser.clan_id = newClanId;
+            saveCurrentAccountToSavedList(currentUser);
             localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
         }
@@ -2577,7 +2758,7 @@
             return;
         }
 
-        showLoader(currentLang === 'ru' ? 'ОТКЛОНЕНИЕ...' : 'REJECTING...');
+        showSimpleLoader(currentLang === 'ru' ? 'ОТКЛОНЕНИЕ...' : 'REJECTING...');
         const req = appData.pendingClans.find(r => r.id === currentRejectingClanId);
         if (req) {
             try {
