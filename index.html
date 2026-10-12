@@ -414,7 +414,13 @@
             padding-bottom: 8px;
         }
 
-        .gear-btn {
+        .top-bar-buttons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .gear-btn, .sound-toggle-btn {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 7px;
@@ -428,8 +434,9 @@
             transition: 0.2s;
         }
 
-        .gear-btn:hover { color: var(--accent-gold); border-color: var(--accent-gold); }
-        .gear-btn svg { width: 15px; height: 15px; fill: currentColor; }
+        .gear-btn:hover, .sound-toggle-btn:hover { color: var(--accent-gold); border-color: var(--accent-gold); }
+        .gear-btn svg, .sound-toggle-btn svg { width: 15px; height: 15px; fill: currentColor; }
+        .sound-toggle-btn.muted { color: var(--danger); border-color: var(--danger); }
 
         .modal-overlay {
             position: fixed;
@@ -462,7 +469,7 @@
 
         .badge-tag {
             display: inline-block;
-            background: #17181c;
+            background: rgba(23, 24, 28, 0.85);
             color: var(--accent-gold);
             padding: 2px 8px;
             border-radius: 5px;
@@ -526,7 +533,6 @@
             padding: 46px 16px 16px 16px;
         }
 
-        /* Детализированная анимированная CSS кнопка выхода в самом нижнем правом углу сайта (над панелью навигации) */
         .global-logout-bottom-btn {
             position: fixed;
             bottom: 64px;
@@ -570,10 +576,13 @@
             display: inline-block;
         }
 
+        /* Страница клана с вашей новой WebP текстурой вместо черного фона */
         .clan-detail-page {
             width: 100%;
             height: 100%;
-            background: var(--bg-dark);
+            background-image: linear-gradient(rgba(18, 19, 22, 0.85), rgba(18, 19, 22, 0.92)), url('https://vsacaavjrsocaejksacr.supabase.co/storage/v1/object/public/musik/i_20261012_103014.webp');
+            background-size: cover;
+            background-position: center;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -606,7 +615,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            background: #17181c;
+            background: rgba(23, 24, 28, 0.85);
             border: 1px solid var(--border-color);
             padding: 5px 10px;
             border-radius: 20px;
@@ -626,7 +635,7 @@
         }
 
         .tg-chat-box {
-            background: #17181c;
+            background: rgba(23, 24, 28, 0.85);
             border: 1px solid var(--border-color);
             border-radius: 9px;
             padding: 12px;
@@ -657,7 +666,7 @@
         }
 
         .tg-msg-bubble {
-            background: #25282e;
+            background: rgba(37, 40, 46, 0.9);
             border: 1px solid var(--border-color);
             padding: 7px 10px;
             border-radius: 10px;
@@ -684,6 +693,43 @@
             .action-buttons-group {
                 grid-template-columns: 1fr 1fr;
             }
+        }
+
+        .copy-invite-css-btn {
+            background: linear-gradient(135deg, #25282e, #1a1c20);
+            border: 1px solid var(--accent-gold);
+            color: var(--text-main);
+            border-radius: 7px;
+            padding: 8px 14px;
+            font-weight: 600;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin: 0;
+            transition: all 0.2s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+            outline: none;
+        }
+
+        .copy-invite-css-btn:hover {
+            background: linear-gradient(135deg, #32353d, #25282e);
+            border-color: #fff;
+            box-shadow: 0 0 10px var(--accent-gold-glow);
+        }
+
+        .copy-icon-svg {
+            width: 15px;
+            height: 15px;
+            fill: var(--accent-gold);
+            transition: fill 0.2s;
+        }
+
+        .copy-invite-css-btn:hover .copy-icon-svg {
+            fill: #fff;
         }
 
         #privacy-push {
@@ -737,7 +783,6 @@
 
     <div id="toast-container"></div>
 
-    <!-- Общий лоадер с увеличенной длительностью последней фазы -->
     <div id="global-loader" class="loading-overlay">
         <div class="spinner-dots">
             <div></div><div></div><div></div>
@@ -817,9 +862,15 @@
                 <div id="view-profile" class="view">
                     <div class="top-bar">
                         <h2 id="profile-title-mode">Личный профиль</h2>
-                        <button class="gear-btn" onclick="openAdminLoginModal()" title="Панель администратора">
-                            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-                        </button>
+                        <div class="top-bar-buttons">
+                            <!-- Детализированная CSS кнопка выключения звука уведомлений -->
+                            <button id="sound-toggle-btn" class="sound-toggle-btn" onclick="toggleAudioMute()" title="Вкл/Выкл звук уведомлений">
+                                <svg id="sound-icon-svg" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                            </button>
+                            <button class="gear-btn" onclick="openAdminLoginModal()" title="Панель администратора">
+                                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c-.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="profile-card">
                         <div class="profile-banner-container" id="profile-banner-box" data-txt="Изменить фото" onclick="triggerAvatarUpload()">
@@ -881,7 +932,6 @@
 
             </div>
 
-            <!-- Красивая анимированная кнопка выхода в самом нижнем правом углу сайта -->
             <button class="global-logout-bottom-btn" onclick="logoutAccount()" title="Выйти из аккаунта">
                 <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
             </button>
@@ -990,6 +1040,23 @@
         'https://api.dicebear.com/7.x/avataaars/svg?seed=ViperSO25&backgroundColor=9b59b6'
     ];
 
+    let soundMuted = false;
+
+    function toggleAudioMute() {
+        soundMuted = !soundMuted;
+        const btn = document.getElementById('sound-toggle-btn');
+        const svg = document.getElementById('sound-icon-svg');
+        if (soundMuted) {
+            btn.classList.add('muted');
+            svg.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+            showToast('Звук', 'Уведомления и звуки отключены');
+        } else {
+            btn.classList.remove('muted');
+            svg.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+            showToast('Звук', 'Уведомления и звуки включены');
+        }
+    }
+
     let musicInitialized = false;
     function initAndPlayAudio() {
         const audio = document.getElementById('bg-audio');
@@ -997,7 +1064,7 @@
         audio.volume = 0.25;
 
         const unlockAndPlay = () => {
-            if (audio.paused) {
+            if (audio.paused && !soundMuted) {
                 audio.play().then(() => {
                     musicInitialized = true;
                 }).catch(err => {});
@@ -1017,14 +1084,13 @@
                 window._pausedByVisibility = true;
             }
         } else {
-            if (window._pausedByVisibility) {
+            if (window._pausedByVisibility && !soundMuted) {
                 audio.play().catch(e => {});
                 window._pausedByVisibility = false;
             }
         }
     });
 
-    // Увеличенная длительность второй фазы загрузки для плавной подготовки интерфейса
     function showLoaderSequence(text1, text2, callback) {
         const loader = document.getElementById('global-loader');
         const loaderText = document.getElementById('loader-text');
@@ -1036,7 +1102,7 @@
             setTimeout(() => {
                 loader.classList.add('hidden');
                 if (callback) callback();
-            }, 1400); // Увеличено до 1.4 секунды для комфортной загрузки всего интерфейса
+            }, 1400);
         }, 800);
     }
 
@@ -1424,6 +1490,7 @@
     }
 
     function playSoftChime() {
+        if (soundMuted) return;
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = ctx.createOscillator();
@@ -1520,6 +1587,7 @@
     let currentRejectingClanId = null;
     let activeChatClanId = null;
     let chatPollInterval = null;
+    let globalSyncInterval = null;
     let isSendingChatLock = false;
 
     let appData = {
@@ -1552,7 +1620,7 @@
         }
     ];
 
-    async function fetchAppDataFromSupabase() {
+    async function fetchAppDataFromSupabase(isBackgroundSync = false) {
         try {
             const { data: clansData } = await sb.from('clans').select('*');
             const { data: membersData } = await sb.from('profiles').select('*');
@@ -1591,12 +1659,28 @@
             }
             
             checkUnreadStatus();
+
+            if (isBackgroundSync && activeChatClanId) {
+                const clan = appData.clans.find(c => c.id === activeChatClanId);
+                if (clan) {
+                    updateChatMessagesContainer(clan);
+                }
+            }
         } catch (err) {
             console.warn('Supabase offline fallback:', err);
             if (!appData.clans || appData.clans.length === 0) {
                 appData.clans = defaultSampleClans;
             }
         }
+    }
+
+    function startGlobalSync() {
+        if (globalSyncInterval) clearInterval(globalSyncInterval);
+        globalSyncInterval = setInterval(() => {
+            if (currentUser.id) {
+                fetchAppDataFromSupabase(true);
+            }
+        }, 3000);
     }
 
     async function checkUnreadStatus() {
@@ -1679,6 +1763,7 @@
             showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ...', async () => {
                 document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
                 await openMainApp();
+                startGlobalSync();
             });
         }
     }
@@ -1719,7 +1804,7 @@
 
                     showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ...', async () => {
                         await openMainApp();
-                        fetchAppDataFromSupabase();
+                        startGlobalSync();
 
                         if (inviteClanId) {
                             window.history.replaceState({}, document.title, window.location.pathname);
@@ -1767,37 +1852,35 @@
             return;
         }
 
-        const randomDefaultAvatar = defaultAvatarsPool[Math.floor(Math.random() * defaultAvatarsPool.length)];
+        showSimpleLoader(currentLang === 'ru' ? 'ПРОВЕРКА ID...' : 'CHECKING ID...');
 
-        showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ...', async () => {
+        try {
+            let existingProfile = null;
             try {
-                let existingProfile = null;
-                try {
-                    let res = await sb.from('profiles').select('*').eq('id', idInput).single();
-                    existingProfile = res.data;
-                } catch(e) {}
+                let res = await sb.from('profiles').select('*').eq('id', idInput).maybeSingle();
+                existingProfile = res.data;
+            } catch(e) {}
 
-                if (!existingProfile) {
-                    const newProf = {
-                        id: idInput,
-                        name: nameInput,
-                        avatar: randomDefaultAvatar,
-                        bio: currentLang === 'ru' ? 'Привет! Я играю в Standoff 2 и ищу сильный клан.' : 'Hi! I play Standoff 2 and look for a strong clan.',
-                        clan_id: null
-                    };
-                    try {
-                        await sb.from('profiles').insert([newProf]);
-                    } catch(e) {}
-                    currentUser = newProf;
-                } else {
-                    currentUser = {
-                        id: existingProfile.id,
-                        name: existingProfile.name,
-                        avatar: existingProfile.avatar || randomDefaultAvatar,
-                        bio: existingProfile.bio,
-                        clanId: existingProfile.clan_id
-                    };
-                }
+            if (existingProfile) {
+                hideLoader();
+                showSiteAlert(currentLang === 'ru' ? 'Такой ID уже существует, выберите другой' : 'This ID already exists, please choose another one');
+                return;
+            }
+
+            const randomDefaultAvatar = defaultAvatarsPool[Math.floor(Math.random() * defaultAvatarsPool.length)];
+
+            showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ...', async () => {
+                const newProf = {
+                    id: idInput,
+                    name: nameInput,
+                    avatar: randomDefaultAvatar,
+                    bio: currentLang === 'ru' ? 'Привет! Я играю в Standoff 2 и ищу сильный клан.' : 'Hi! I play Standoff 2 and look for a strong clan.',
+                    clan_id: null
+                };
+                try {
+                    await sb.from('profiles').insert([newProf]);
+                } catch(e) {}
+                currentUser = newProf;
 
                 saveCurrentAccountToSavedList(currentUser);
                 localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
@@ -1805,10 +1888,11 @@
 
                 document.getElementById('screen-auth').classList.add('hidden');
                 document.getElementById('screen-welcome-info').classList.remove('hidden');
-            } catch (err) {
-                showSiteAlert('Error: ' + err.message);
-            }
-        });
+            });
+        } catch (err) {
+            hideLoader();
+            showSiteAlert('Error: ' + err.message);
+        }
     }
 
     function logoutAccount() {
@@ -1821,6 +1905,7 @@
             
             currentUser = { id: '', name: '', avatar: '', clanId: null, bio: '' };
             stopChatPolling();
+            if (globalSyncInterval) clearInterval(globalSyncInterval);
 
             document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
             document.getElementById('screen-auth').classList.remove('hidden');
@@ -1849,6 +1934,7 @@
         renderFeed();
         renderProfile();
         renderNotifications();
+        startGlobalSync();
     }
 
     function showCreateClanScreen() {
@@ -2081,7 +2167,7 @@
                     updateChatMessagesContainer(clan);
                 }
             } catch (e) {}
-        }, 3000);
+        }, 2000);
     }
 
     function stopChatPolling() {
@@ -2200,7 +2286,10 @@
         const inviteSection = `
             <div style="margin-top: 14px; background: rgba(20,21,24,0.7); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; text-align: center;">
                 <p style="font-size: 10px; color: var(--accent-gold); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px;">[ССЫЛКА ДЛЯ ПРИГЛАШЕНИЯ]</p>
-                <button class="btn" style="background: #25282e; font-size: 10px; margin: 0; padding: 7px;" onclick="copyInviteLink('${clan.id}')">[📋] Скопировать прямую ссылку</button>
+                <button class="copy-invite-css-btn" onclick="copyInviteLink('${clan.id}')">
+                    <svg class="copy-icon-svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    Скопировать прямую ссылку
+                </button>
             </div>
         `;
 
@@ -2718,10 +2807,11 @@
             await sb.from('profiles').update({ clan_id: newClanId }).eq('id', req.user_id);
             await sb.from('pending_clans').delete().eq('id', reqId);
 
+            // Отправка уведомления создателю клана
             const notif = {
                 id: Date.now() + '_' + Math.floor(Math.random()*1000),
                 user_id: req.user_id,
-                text: currentLang === 'ru' ? `Поздравляем! Ваша заявка на клан "${req.name}" одобрена!` : `Congratulations! Your request for clan "${req.name}" has been approved!`,
+                text: currentLang === 'ru' ? `Поздравляем! Ваш клан "${req.name}" ${req.tag} успешно создан и одобрен администратором!` : `Congratulations! Your clan "${req.name}" ${req.tag} has been successfully created and approved!`,
                 unread: true
             };
             await sb.from('notifications').insert([notif]);
