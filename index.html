@@ -576,7 +576,6 @@
             display: inline-block;
         }
 
-        /* Страница клана с вашей новой WebP текстурой вместо черного фона */
         .clan-detail-page {
             width: 100%;
             height: 100%;
@@ -623,6 +622,7 @@
             color: var(--text-main);
             cursor: pointer;
             transition: 0.2s;
+            position: relative;
         }
 
         .member-chip:hover { border-color: var(--accent-gold); }
@@ -632,6 +632,33 @@
             height: 20px;
             border-radius: 50%;
             object-fit: cover;
+        }
+
+        /* Увеличенные и стильные CSS индикаторы в сети / не в сети */
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 5px;
+            flex-shrink: 0;
+        }
+
+        .status-indicator.online {
+            background-color: var(--success);
+            box-shadow: 0 0 8px var(--success);
+            animation: pulseOnline 1.5s infinite ease-in-out;
+        }
+
+        .status-indicator.offline {
+            background-color: #e74c3c;
+            box-shadow: 0 0 6px rgba(231, 76, 60, 0.6);
+        }
+
+        @keyframes pulseOnline {
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
         }
 
         .tg-chat-box {
@@ -804,9 +831,10 @@
     <div id="screen-auth" class="screen hidden">
         <div class="auth-container">
             <h2 id="t-auth-title">Приветствие в SO2fam</h2>
-            <p id="t-auth-desc">Введите ваш игровой ID (только цифры, от 9 символов) и имя</p>
+            <p id="t-auth-desc">Введите ваш игровой ID, имя и пароль для защиты аккаунта</p>
             <input type="text" id="auth-id" placeholder="Игровой ID (например: 123456789)" maxlength="15">
             <input type="text" id="auth-name" placeholder="Имя пользователя" maxlength="25">
+            <input type="password" id="auth-pass" placeholder="Пароль аккаунта" maxlength="30">
             <button class="btn btn-gold" id="t-auth-btn" onclick="registerUser()">Войти в систему</button>
             
             <div id="auth-accounts-switcher" style="margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 10px; display: none;">
@@ -863,7 +891,6 @@
                     <div class="top-bar">
                         <h2 id="profile-title-mode">Личный профиль</h2>
                         <div class="top-bar-buttons">
-                            <!-- Детализированная CSS кнопка выключения звука уведомлений -->
                             <button id="sound-toggle-btn" class="sound-toggle-btn" onclick="toggleAudioMute()" title="Вкл/Выкл звук уведомлений">
                                 <svg id="sound-icon-svg" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                             </button>
@@ -965,7 +992,8 @@
         <div class="modal-box" style="text-align: center; max-width: 320px;">
             <img id="portfolio-avatar" src="" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-gold); margin-bottom: 8px;">
             <h3 id="portfolio-name" style="margin-bottom: 3px;">Имя игрока</h3>
-            <p id="portfolio-id" style="color: var(--accent-gold); font-size: 10.5px; font-weight: bold; margin-bottom: 6px;">ID: 000000</p>
+            <p id="portfolio-id" style="color: var(--accent-gold); font-size: 10.5px; font-weight: bold; margin-bottom: 3px;">ID: 000000</p>
+            <p id="portfolio-status" style="font-size: 10.5px; font-weight: bold; margin-bottom: 8px;"></p>
             
             <div id="portfolio-clan-badge" style="display: none; background: rgba(243,156,18,0.08); border: 1px solid var(--accent-gold); padding: 7px; border-radius: 6px; margin-bottom: 8px; text-align: left;">
                 <span id="t-port-mini" style="font-size: 8.5px; color: var(--text-muted); display: block; margin-bottom: 2px;">МИНИ-КЛАН:</span>
@@ -1041,6 +1069,7 @@
     ];
 
     let soundMuted = false;
+    let clanMuteSettings = {};
 
     function toggleAudioMute() {
         soundMuted = !soundMuted;
@@ -1049,12 +1078,42 @@
         if (soundMuted) {
             btn.classList.add('muted');
             svg.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
-            showToast('Звук', 'Уведомления и звуки отключены');
+            playButtonBadgeClick();
         } else {
             btn.classList.remove('muted');
             svg.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
-            showToast('Звук', 'Уведомления и звуки включены');
+            playButtonBadgeClick();
         }
+    }
+
+    function playButtonBadgeClick() {
+        if (soundMuted) return;
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(440, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.08, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.05);
+        } catch(e) {}
+    }
+
+    function toggleClanMute(clanId) {
+        playButtonBadgeClick();
+        if (clanMuteSettings[clanId]) {
+            clanMuteSettings[clanId] = false;
+            showToast('Уведомления', 'Уведомления для этого клана ВКЛЮЧЕНЫ');
+        } else {
+            clanMuteSettings[clanId] = true;
+            showToast('Уведомления', 'Уведомления для этого клана ОТКЛЮЧЕНЫ');
+        }
+        openClanDetail(clanId);
     }
 
     let musicInitialized = false;
@@ -1234,9 +1293,10 @@
         ru: {
             loader: 'ЗАГРУЗКА...',
             authTitle: 'Приветствие в SO2fam',
-            authDesc: 'Введите ваш игровой ID (только цифры, от 9 символов) и имя',
+            authDesc: 'Введите ваш игровой ID, имя и пароль для защиты аккаунта',
             authIdPH: 'Игровой ID (например: 123456789)',
             authNamePH: 'Имя пользователя',
+            authPassPH: 'Пароль аккаунта',
             authBtn: 'Войти в систему',
             welTitle: 'Добро пожаловать',
             welText: 'Тут используются только настоящие кланы из игры Standoff 2.<br><br><b>Для чего нужен этот сайт:</b> Площадка создана для поиска проверенных кланов, подачи заявок на вступление, общения игроков и создания глобального сообщества без фейков.',
@@ -1320,9 +1380,10 @@
         en: {
             loader: 'LOADING...',
             authTitle: 'Welcome to SO2fam',
-            authDesc: 'Enter your game ID (digits only, 9+ chars) & username',
+            authDesc: 'Enter your game ID, username and password',
             authIdPH: 'Game ID (e.g., 123456789)',
             authNamePH: 'Username',
+            authPassPH: 'Account password',
             authBtn: 'Sign In',
             welTitle: 'Welcome',
             welText: 'Only real clans from Standoff 2 are featured here.<br><br><b>Why this site:</b> A platform to find verified clans, apply for membership, chat with players, and build a global community without fakes.',
@@ -1423,6 +1484,7 @@
         document.getElementById('t-auth-desc').innerText = d.authDesc;
         document.getElementById('auth-id').placeholder = d.authIdPH;
         document.getElementById('auth-name').placeholder = d.authNamePH;
+        document.getElementById('auth-pass').placeholder = d.authPassPH;
         document.getElementById('t-auth-btn').innerText = d.authBtn;
 
         document.getElementById('t-wel-title').innerText = d.welTitle;
@@ -1489,26 +1551,8 @@
         document.getElementById('t-rej-cancel').innerText = d.rejCancel;
     }
 
-    function playSoftChime() {
-        if (soundMuted) return;
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
-            gain.gain.setValueAtTime(0.07, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.3);
-        } catch(e) {}
-    }
-
     function showToast(title, text) {
-        playSoftChime();
+        playButtonBadgeClick();
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
         toast.className = 'toast-item';
@@ -1578,7 +1622,8 @@
         name: '',
         avatar: '',
         clanId: null,
-        bio: ''
+        bio: '',
+        password: ''
     };
 
     let regularUserSession = null;
@@ -1588,7 +1633,9 @@
     let activeChatClanId = null;
     let chatPollInterval = null;
     let globalSyncInterval = null;
+    let heartbeatInterval = null;
     let isSendingChatLock = false;
+    let lastKnownChatCount = {};
 
     let appData = {
         clans: [],
@@ -1607,18 +1654,22 @@
             owner_id: 'admin_abs',
             members: [],
             chat: []
-        },
-        {
-            id: 'demo_2',
-            name: 'Cyber Syndicate',
-            tag: '[SYN]',
-            description: 'Дружное комьюнити игроков SO2. Совместные тренировки, турниры и клановые войны.',
-            photo: 'https://cdn-www.bluestacks.com/bs-images/so2-breakout1.jpg',
-            owner_id: 'admin_syn',
-            members: [],
-            chat: []
         }
     ];
+
+    async function sendHeartbeat() {
+        if (!currentUser.id || isAdminReserveActive) return;
+        try {
+            const nowIso = new Date().toISOString();
+            await sb.from('profiles').update({ last_seen: nowIso }).eq('id', currentUser.id);
+        } catch(e) {}
+    }
+
+    function startHeartbeat() {
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        sendHeartbeat();
+        heartbeatInterval = setInterval(sendHeartbeat, 10000);
+    }
 
     async function fetchAppDataFromSupabase(isBackgroundSync = false) {
         try {
@@ -1629,13 +1680,31 @@
             const { data: pendingData } = await sb.from('pending_clans').select('*');
             const { data: notifsData } = await sb.from('notifications').select('*');
 
-            let loadedClans = (clansData || []).map(c => ({
-                ...c,
-                photo: c.photo && c.photo.trim() !== '' ? c.photo : 'https://via.placeholder.com/700x200/25282e/f39c12?text=SO2+CLAN',
-                desc: c.description,
-                members: (membersData || []).filter(m => m.clan_id === c.id),
-                chat: (chatData || []).filter(ch => ch.clan_id === c.id)
-            }));
+            let loadedClans = (clansData || []).map(c => {
+                const clanChatList = (chatData || []).filter(ch => ch.clan_id === c.id);
+                
+                if (isBackgroundSync && currentUser.id && !clanMuteSettings[c.id]) {
+                    const myClanId = currentUser.clanId || currentUser.clan_id;
+                    if (myClanId === c.id) {
+                        const prevCount = lastKnownChatCount[c.id] || 0;
+                        if (clanChatList.length > prevCount && prevCount > 0) {
+                            const latestMsg = clanChatList[clanChatList.length - 1];
+                            if (latestMsg && latestMsg.sender_id !== currentUser.id) {
+                                showToast(`Чат: ${c.name}`, `${latestMsg.sender_name}: ${latestMsg.text}`);
+                            }
+                        }
+                    }
+                }
+                lastKnownChatCount[c.id] = clanChatList.length;
+
+                return {
+                    ...c,
+                    photo: c.photo && c.photo.trim() !== '' ? c.photo : 'https://via.placeholder.com/700x200/25282e/f39c12?text=SO2+CLAN',
+                    desc: c.description,
+                    members: (membersData || []).filter(m => m.clan_id === c.id),
+                    chat: clanChatList
+                };
+            });
 
             if (loadedClans.length === 0) {
                 loadedClans = defaultSampleClans;
@@ -1654,6 +1723,7 @@
                     currentUser.name = myProf.name || currentUser.name;
                     currentUser.avatar = myProf.avatar || currentUser.avatar;
                     currentUser.bio = myProf.bio || currentUser.bio;
+                    currentUser.password = myProf.password || currentUser.password;
                     saveCurrentAccountToSavedList(currentUser);
                 }
             }
@@ -1756,6 +1826,12 @@
         const list = getSavedAccounts();
         const found = list.find(x => x.id === id);
         if (found) {
+            const passInput = prompt(currentLang === 'ru' ? `Введите пароль для аккаунта ID ${id}:` : `Enter password for account ID ${id}:`);
+            if (passInput !== found.password) {
+                showSiteAlert(currentLang === 'ru' ? 'Неверный пароль!' : 'Incorrect password!');
+                return;
+            }
+
             currentUser = found;
             localStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
             sessionStorage.setItem('so2fam_current_user', JSON.stringify(currentUser));
@@ -1764,6 +1840,7 @@
                 document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
                 await openMainApp();
                 startGlobalSync();
+                startHeartbeat();
             });
         }
     }
@@ -1792,6 +1869,7 @@
                         name: parsed.name,
                         avatar: parsed.avatar,
                         bio: parsed.bio,
+                        password: parsed.password,
                         clanId: parsed.clanId || parsed.clan_id
                     };
                     
@@ -1805,6 +1883,7 @@
                     showLoaderSequence('ЗАГРУЗКА ИНТЕРФЕЙСА...', 'ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ...', async () => {
                         await openMainApp();
                         startGlobalSync();
+                        startHeartbeat();
 
                         if (inviteClanId) {
                             window.history.replaceState({}, document.title, window.location.pathname);
@@ -1835,6 +1914,7 @@
     async function registerUser() {
         const idInput = document.getElementById('auth-id').value.trim();
         const nameInput = document.getElementById('auth-name').value.trim();
+        const passInput = document.getElementById('auth-pass').value.trim();
 
         const isNumeric = /^\d+$/.test(idInput);
         if (!isNumeric || idInput.length < 9) {
@@ -1847,12 +1927,17 @@
             return;
         }
 
+        if (!passInput || passInput.length < 4) {
+            showSiteAlert(currentLang === 'ru' ? 'Придумайте надежный пароль (минимум 4 символа).' : 'Please enter a password (min 4 chars).');
+            return;
+        }
+
         if (containsProfanity(nameInput)) {
             showSiteAlert(currentLang === 'ru' ? 'Имя пользователя содержит запрещенные слова!' : 'Username contains forbidden words!');
             return;
         }
 
-        showSimpleLoader(currentLang === 'ru' ? 'ПРОВЕРКА ID...' : 'CHECKING ID...');
+        showSimpleLoader(currentLang === 'ru' ? 'ПРОВЕРКА И СОХРАНЕНИЕ...' : 'CHECKING & SAVING...');
 
         try {
             let existingProfile = null;
@@ -1862,9 +1947,11 @@
             } catch(e) {}
 
             if (existingProfile) {
-                hideLoader();
-                showSiteAlert(currentLang === 'ru' ? 'Такой ID уже существует, выберите другой' : 'This ID already exists, please choose another one');
-                return;
+                if (existingProfile.password && existingProfile.password !== passInput) {
+                    hideLoader();
+                    showSiteAlert(currentLang === 'ru' ? 'Такой ID уже существует и пароль неверный! Выберите другой ID или введите правильный пароль.' : 'This ID already exists and password is incorrect!');
+                    return;
+                }
             }
 
             const randomDefaultAvatar = defaultAvatarsPool[Math.floor(Math.random() * defaultAvatarsPool.length)];
@@ -1873,12 +1960,14 @@
                 const newProf = {
                     id: idInput,
                     name: nameInput,
-                    avatar: randomDefaultAvatar,
-                    bio: currentLang === 'ru' ? 'Привет! Я играю в Standoff 2 и ищу сильный клан.' : 'Hi! I play Standoff 2 and look for a strong clan.',
-                    clan_id: null
+                    password: passInput,
+                    avatar: existingProfile ? existingProfile.avatar : randomDefaultAvatar,
+                    bio: existingProfile ? existingProfile.bio : (currentLang === 'ru' ? 'Привет! Я играю в Standoff 2 и ищу сильный клан.' : 'Hi! I play Standoff 2 and look for a strong clan.'),
+                    clan_id: existingProfile ? existingProfile.clan_id : null,
+                    last_seen: new Date().toISOString()
                 };
                 try {
-                    await sb.from('profiles').insert([newProf]);
+                    await sb.from('profiles').upsert([newProf]);
                 } catch(e) {}
                 currentUser = newProf;
 
@@ -1888,6 +1977,7 @@
 
                 document.getElementById('screen-auth').classList.add('hidden');
                 document.getElementById('screen-welcome-info').classList.remove('hidden');
+                startHeartbeat();
             });
         } catch (err) {
             hideLoader();
@@ -1903,14 +1993,16 @@
             localStorage.removeItem('so2fam_current_user');
             sessionStorage.removeItem('so2fam_current_user');
             
-            currentUser = { id: '', name: '', avatar: '', clanId: null, bio: '' };
+            currentUser = { id: '', name: '', avatar: '', clanId: null, bio: '', password: '' };
             stopChatPolling();
             if (globalSyncInterval) clearInterval(globalSyncInterval);
+            if (heartbeatInterval) clearInterval(heartbeatInterval);
 
             document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
             document.getElementById('screen-auth').classList.remove('hidden');
             document.getElementById('auth-id').value = '';
             document.getElementById('auth-name').value = '';
+            document.getElementById('auth-pass').value = '';
             renderSavedAccountsOnAuth();
         });
     }
@@ -1919,7 +2011,7 @@
         document.getElementById('screen-welcome-info').classList.add('hidden');
         document.getElementById('screen-hub-choice').classList.remove('hidden');
         document.getElementById('privacy-push').classList.remove('hidden');
-        playSoftChime();
+        playButtonBadgeClick();
     }
 
     function closePrivacyPush() {
@@ -1935,6 +2027,7 @@
         renderProfile();
         renderNotifications();
         startGlobalSync();
+        startHeartbeat();
     }
 
     function showCreateClanScreen() {
@@ -2055,14 +2148,31 @@
     }
 
     function openMyPortfolio() {
-        openUserProfileModal(currentUser.id, currentUser.name, currentUser.avatar, currentUser.bio);
+        openUserProfileModal(currentUser.id, currentUser.name, currentUser.avatar, currentUser.bio, true);
     }
 
-    function openUserProfileModal(userId, name, avatar, bio) {
+    function isUserOnline(lastSeenStr) {
+        if (!lastSeenStr) return false;
+        const lastSeenTime = new Date(lastSeenStr).getTime();
+        const nowTime = new Date().getTime();
+        return (nowTime - lastSeenTime) < 30000;
+    }
+
+    function openUserProfileModal(userId, name, avatar, bio, isMe = false, lastSeen = null) {
         document.getElementById('portfolio-avatar').src = avatar || 'https://via.placeholder.com/150/25282e/f39c12?text=SO2';
         document.getElementById('portfolio-name').innerText = name || 'Игрок';
         document.getElementById('portfolio-id').innerText = 'ID: ' + (userId || '---');
         document.getElementById('portfolio-bio').innerText = bio || (currentLang === 'ru' ? 'Описание отсутствует.' : 'No description.');
+
+        const statusEl = document.getElementById('portfolio-status');
+        const online = isMe || isUserOnline(lastSeen);
+        
+        // Обновленный стильный CSS статус в модальном окне
+        if (online) {
+            statusEl.innerHTML = `<span style="display:inline-flex; align-items:center; justify-content:center; gap:6px; color:var(--success);"><span class="status-indicator online" style="margin:0;"></span> ${currentLang === 'ru' ? 'В сети (Online)' : 'Online'}</span>`;
+        } else {
+            statusEl.innerHTML = `<span style="display:inline-flex; align-items:center; justify-content:center; gap:6px; color:#e74c3c;"><span class="status-indicator offline" style="margin:0;"></span> ${currentLang === 'ru' ? 'Не в сети (Offline)' : 'Offline'}</span>`;
+        }
 
         let userClanObj = null;
         let isClanOwner = false;
@@ -2106,6 +2216,7 @@
         let foundAvatar = 'https://via.placeholder.com/150/25282e/f39c12?text=SO2';
         let foundBio = currentLang === 'ru' ? 'Описание отсутствует.' : 'No description.';
         let foundId = userId || '---';
+        let foundLastSeen = null;
 
         for (let clan of appData.clans) {
             if (clan.members) {
@@ -2114,6 +2225,7 @@
                     if (m.avatar) foundAvatar = m.avatar;
                     if (m.bio) foundBio = m.bio;
                     if (m.id) foundId = m.id;
+                    if (m.last_seen) foundLastSeen = m.last_seen;
                     break;
                 }
             }
@@ -2128,7 +2240,7 @@
             }
         }
 
-        openUserProfileModal(foundId, userName || 'Player', foundAvatar, foundBio);
+        openUserProfileModal(foundId, userName || 'Player', foundAvatar, foundBio, false, foundLastSeen);
     }
 
     function renderFeed() {
@@ -2237,12 +2349,18 @@
         const d = dict[currentLang];
         const isOwner = clan.owner_id === currentUser.id;
         const isMember = currentUser.clanId === clanId || currentUser.clan_id === clanId;
+        const isMuted = clanMuteSettings[clanId] || false;
 
         let membersHtml = clan.members && clan.members.length > 0 ? clan.members.map(m => {
             const canKick = isOwner && m.id !== clan.owner_id && m.id !== currentUser.id;
+            const online = isUserOnline(m.last_seen);
+            const statusClass = online ? 'status-indicator online' : 'status-indicator offline';
+            const statusTitle = online ? (currentLang === 'ru' ? 'В сети' : 'Online') : (currentLang === 'ru' ? 'Не в сети' : 'Offline');
+
             return `
                 <div class="member-chip" onclick="viewUserPortfolio('${m.id || ''}', '${m.name || 'Player'}')">
                     <img src="${m.avatar || 'https://via.placeholder.com/50'}"> ${m.name || 'Player'}
+                    <span class="${statusClass}" title="${statusTitle}"></span>
                     ${canKick ? `<span style="color:var(--danger); margin-left:4px; font-weight:bold; cursor:pointer;" onclick="event.stopPropagation(); kickMember('${m.id}', '${clan.id}')" title="Исключить участника">[✕]</span>` : ''}
                 </div>
             `;
@@ -2283,6 +2401,22 @@
             actionButton = `<button class="btn btn-gold" onclick="sendJoinRequest('${clan.id}')">${d.btnJoin}</button>`;
         }
 
+        const muteButtonIcon = isMuted ? 
+            `<svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:var(--danger);"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>` : 
+            `<svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:var(--accent-gold);"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>`;
+
+        const clanHeaderTools = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h2 style="margin: 0; text-align: left; color: var(--text-main); font-size: 20px;">${clan.name}</h2>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn" style="width: auto; margin:0; padding: 6px 10px; font-size: 10px; background: #25282e;" onclick="toggleClanMute('${clan.id}')" title="Выключить/включить уведомления в клане">
+                        ${muteButtonIcon}
+                    </button>
+                    <button class="btn" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; background: #25282e;" onclick="switchView('feed', document.querySelectorAll('.nav-item')[0], 0)">[←] Назад</button>
+                </div>
+            </div>
+        `;
+
         const inviteSection = `
             <div style="margin-top: 14px; background: rgba(20,21,24,0.7); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; text-align: center;">
                 <p style="font-size: 10px; color: var(--accent-gold); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px;">[ССЫЛКА ДЛЯ ПРИГЛАШЕНИЯ]</p>
@@ -2298,10 +2432,7 @@
             <div class="clan-detail-page">
                 <img src="${clan.photo}" class="clan-detail-banner" alt="Clan Banner">
                 <div class="clan-detail-body">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <h2 style="margin: 0; text-align: left; color: var(--text-main); font-size: 20px;">${clan.name}</h2>
-                        <button class="btn" style="width: auto; margin:0; padding: 6px 12px; font-size: 10px; background: #25282e;" onclick="switchView('feed', document.querySelectorAll('.nav-item')[0], 0)">[←] Назад</button>
-                    </div>
+                    ${clanHeaderTools}
                     <div class="badge-tag">${clan.tag}</div>
                     <p style="margin: 10px 0; text-align: left; font-size: 12px; color: var(--text-muted); line-height: 1.5;">${clan.description || clan.desc || (currentLang === 'ru' ? 'Описание отсутствует.' : 'No description.')}</p>
                     
@@ -2807,7 +2938,6 @@
             await sb.from('profiles').update({ clan_id: newClanId }).eq('id', req.user_id);
             await sb.from('pending_clans').delete().eq('id', reqId);
 
-            // Отправка уведомления создателю клана
             const notif = {
                 id: Date.now() + '_' + Math.floor(Math.random()*1000),
                 user_id: req.user_id,
@@ -2853,7 +2983,7 @@
         if (req) {
             try {
                 await sb.from('pending_clans').delete().eq('id', currentRejectingClanId);
-                const notifText = currentLang === 'ru' ? `Ваша заявка на клан "${req.name}" отклонена. Причина: ${reason}` : `Your clan request for "${req.name}" was rejected. Reason: ${reason}`;
+                const notifText = currentLang === 'ru' ? `Ваша заявка на создание клана "${req.name}" отклонена администратором. Причина: ${reason}` : `Your clan creation request for "${req.name}" was rejected. Reason: ${reason}`;
                 const notif = {
                     id: Date.now() + '_' + Math.floor(Math.random()*1000),
                     user_id: req.user_id,
